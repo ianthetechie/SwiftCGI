@@ -38,7 +38,7 @@ server.paramsAvailableHandler = { request in
 }
 
 server.stdinAvailableHandler = { request in
-    let response = HTTPResponse(body: "안녕하세요, Swifter!")
+    let response = HTTPResponse(status: .OK, contentType: .TextPlain, body: "안녕하세요, Swifter! The time is now \(NSDate())")
     if let responseData = response.responseData {
         request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
     }
