@@ -9,14 +9,18 @@
 /* Begin PBXBuildFile section */
 		CE052E3A1A5CBAAB00F8DA34 /* UIntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E391A5CBAAB00F8DA34 /* UIntExtensions.swift */; };
 		CE052E3B1A5CBE1B00F8DA34 /* UIntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E391A5CBAAB00F8DA34 /* UIntExtensions.swift */; };
-		CE052E3C1A5CC17100F8DA34 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* Types.swift */; };
+		CE052E3C1A5CC17100F8DA34 /* FCGITypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* FCGITypes.swift */; };
 		CE052E3D1A5CC17700F8DA34 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD741A5A256E0014D017 /* Record.swift */; };
 		CE052E3E1A5CC28C00F8DA34 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD771A5A57DC0014D017 /* Request.swift */; };
+		CE052E401A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */; };
+		CE052E411A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */; };
+		CE052E431A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */; };
+		CE052E441A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */; };
 		CE7DFA7F1A5B6AE200221B93 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DFA7E1A5B6AE200221B93 /* Server.swift */; };
 		CEEBFD311A5A1D420014D017 /* SwiftCGI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBFD301A5A1D420014D017 /* SwiftCGI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEEBFD371A5A1D430014D017 /* SwiftCGI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEEBFD2B1A5A1D420014D017 /* SwiftCGI.framework */; };
 		CEEBFD3E1A5A1D430014D017 /* SwiftCGITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD3D1A5A1D430014D017 /* SwiftCGITests.swift */; };
-		CEEBFD721A5A20590014D017 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* Types.swift */; };
+		CEEBFD721A5A20590014D017 /* FCGITypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* FCGITypes.swift */; };
 		CEEBFD751A5A256E0014D017 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD741A5A256E0014D017 /* Record.swift */; };
 		CEEBFD781A5A57DC0014D017 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD771A5A57DC0014D017 /* Request.swift */; };
 		CEEBFD881A5A591F0014D017 /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBFD861A5A591F0014D017 /* GCDAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -35,6 +39,8 @@
 
 /* Begin PBXFileReference section */
 		CE052E391A5CBAAB00F8DA34 /* UIntExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIntExtensions.swift; sourceTree = "<group>"; };
+		CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPResponseHelpers.swift; sourceTree = "<group>"; };
+		CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPTypes.swift; sourceTree = "<group>"; };
 		CE7DFA7E1A5B6AE200221B93 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		CEEBFD2B1A5A1D420014D017 /* SwiftCGI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftCGI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEEBFD2F1A5A1D420014D017 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -42,7 +48,7 @@
 		CEEBFD361A5A1D430014D017 /* SwiftCGITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftCGITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEEBFD3C1A5A1D430014D017 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CEEBFD3D1A5A1D430014D017 /* SwiftCGITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftCGITests.swift; sourceTree = "<group>"; };
-		CEEBFD711A5A20590014D017 /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
+		CEEBFD711A5A20590014D017 /* FCGITypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FCGITypes.swift; sourceTree = "<group>"; };
 		CEEBFD741A5A256E0014D017 /* Record.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		CEEBFD771A5A57DC0014D017 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		CEEBFD7B1A5A58BF0014D017 /* SwiftCGITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftCGITests-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -93,11 +99,13 @@
 			children = (
 				CEEBFD301A5A1D420014D017 /* SwiftCGI.h */,
 				CEEBFD2E1A5A1D420014D017 /* Supporting Files */,
-				CEEBFD711A5A20590014D017 /* Types.swift */,
+				CEEBFD711A5A20590014D017 /* FCGITypes.swift */,
 				CEEBFD741A5A256E0014D017 /* Record.swift */,
 				CEEBFD771A5A57DC0014D017 /* Request.swift */,
 				CE7DFA7E1A5B6AE200221B93 /* Server.swift */,
 				CE052E391A5CBAAB00F8DA34 /* UIntExtensions.swift */,
+				CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */,
+				CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */,
 			);
 			path = SwiftCGI;
 			sourceTree = "<group>";
@@ -246,11 +254,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE7DFA7F1A5B6AE200221B93 /* Server.swift in Sources */,
+				CE052E401A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */,
 				CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */,
 				CEEBFD751A5A256E0014D017 /* Record.swift in Sources */,
 				CEEBFD781A5A57DC0014D017 /* Request.swift in Sources */,
-				CEEBFD721A5A20590014D017 /* Types.swift in Sources */,
+				CEEBFD721A5A20590014D017 /* FCGITypes.swift in Sources */,
 				CE052E3A1A5CBAAB00F8DA34 /* UIntExtensions.swift in Sources */,
+				CE052E431A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,8 +269,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEEBFD3E1A5A1D430014D017 /* SwiftCGITests.swift in Sources */,
+				CE052E411A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */,
 				CE052E3B1A5CBE1B00F8DA34 /* UIntExtensions.swift in Sources */,
-				CE052E3C1A5CC17100F8DA34 /* Types.swift in Sources */,
+				CE052E441A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */,
+				CE052E3C1A5CC17100F8DA34 /* FCGITypes.swift in Sources */,
 				CE052E3D1A5CC17700F8DA34 /* Record.swift in Sources */,
 				CE052E3E1A5CC28C00F8DA34 /* Request.swift in Sources */,
 			);

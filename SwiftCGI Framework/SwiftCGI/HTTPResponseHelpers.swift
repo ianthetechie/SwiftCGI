@@ -1,6 +1,6 @@
 //
-//  main.swift
-//  SwiftCGIDemo
+//  HTTPResponseHelpers.swift
+//  SwiftCGI
 //
 //  Copyright (c) 2014, Ian Wagner
 //  All rights reserved.
@@ -29,31 +29,40 @@
 //
 
 import Foundation
-import SwiftCGI
 
-let server = FCGIServer(port: 9000)
-
-server.paramsAvailableHandler = { request in
+public struct HTTPResponse {
+    // MARK: Stored Properties
     
-}
-
-server.stdinAvailableHandler = { request in
-    let response = HTTPResponse(body: "안녕하세요, Swifter!")
-    if let responseData = response.responseData {
-        request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
+    public let status: HTTPStatus
+    public let contentType: ContentType
+    public let body: String
+    
+    
+    // MARK: Computed properties
+    
+    public var contentLength: Int { return countElements(body.utf8) }
+    public var headerString: String {
+        return "HTTP/1.1 \(status.rawValue) \(status.description)\r\nContent-Type: \(contentType.rawValue)\r\nContent-Length: \(contentLength)\r\n\r\n"
+    }
+    public var responseData: NSData? {
+        let responseString = headerString + body as NSString
+        return responseString.dataUsingEncoding(NSUTF8StringEncoding)
     }
     
-    request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
-}
-
-println("Starting SwiftCGI Server")
-
-var err: NSError?
-server.startWithError(&err)
-
-if let error = err {
-    println(err)
-    exit(1)
-} else {
-    dispatch_main()
+    
+    // MARK: Init
+    
+    public init(status: HTTPStatus, contentType: ContentType, body: String) {
+        self.status = status
+        self.contentType = contentType
+        self.body = body
+    }
+    
+    // NOTE: The current Swift compiler doesn't allow convenience initializers
+    // on structs, so the other initializer is not called
+    public init(body: String) {
+        status = .OK
+        contentType = .TextHTML
+        self.body = body
+    }
 }

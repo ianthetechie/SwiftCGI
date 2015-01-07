@@ -1,5 +1,5 @@
 //
-//  Types.swift
+//  FCGITypes.swift
 //  SwiftCGI
 //
 //  Copyright (c) 2014, Ian Wagner
