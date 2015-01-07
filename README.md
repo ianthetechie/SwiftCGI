@@ -10,12 +10,14 @@ to throw out the perfectly good piece of work that is GCDAsyncSocket).
 A valid question. Mostly because I was bored last weekend. Also, because I am passionate about a couple of things.
 First, I love Swift. Call me an Apple fanboy, but I'm a huge fan of the language and think they hit the nail on the
 head. Second, I love lasers, but that's not important right now. Third, I am a huge supporter of functional (and
-similar derived styles) of programming. Fourth, because of items 1 and 3, I think that Swift is going to (eventually)
-bring functional programming within reach of the "normal" programmer. I'm already starting to write iOS apps in a
-functional style thanks to Swift, and it's AWESOME. Which leads me to the final reason that I will bore you with: I
-hate programming web apps. I did it for way too many years. It scarred me for life. But I may be convinced to go back
-at some point after my JavaScript hangover wears off and I can write server-side code in a framework that is not
-bloated and works well with a functional approach.
+similar derived styles) of programming. Fourth, I think that Swift is going to (eventually) bring functional
+programming within reach of the "normal" programmer who can't convince his boss to let him rewrite the company
+intranet in some arcane Haskell framework (which would be crazy awesome, but might not be maintainable by your
+average kid out of school; Swift OTOH is). I'm already starting to write iOS apps in a functional style thanks to
+Swift, and it's AWESOME. Which leads me to the final reason that I will bore you with: I hate programming web apps.
+I did it for way too many years. It scarred me for life. But I may be convinced to go back at some point after my
+JavaScript hangover wears off and I can write server-side code in a framework that is not bloated and works well with
+a functional approach.
 
 ## Vision
 SwiftCGI will eventually become a mature, modular microframework that encourages a functional approach to developing
