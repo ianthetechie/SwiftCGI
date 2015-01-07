@@ -284,7 +284,7 @@ func readUInt16FromBigEndianData(data: NSData, atIndex index: Int) -> UInt16 {
 
 func createRecordFromHeaderData(data: NSData) -> FCGIRecord? {
     // Check the length of the data
-    if data.length == 8 {
+    if data.length == Int(FCGIRecordHeaderLength) {
         // Parse the version number
         var rawVersion: FCGIVersion.RawValue = 0
         data.getBytes(&rawVersion, range: NSMakeRange(0, 1))

@@ -36,19 +36,18 @@ import Foundation
 public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     // MARK: Properties
     
-    let port: UInt16
+    public let port: UInt16
     public var paramsAvailableHandler: (FCGIRequest -> Void)?
     public var requestHandler: FCGIRequestHandler
     
     let delegateQueue: dispatch_queue_t
-    var recordContext: FCGIRecord?
+    var recordContext: [GCDAsyncSocket: FCGIRecord] = [:]
     lazy var listener: GCDAsyncSocket = {
         GCDAsyncSocket(delegate: self, delegateQueue: self.delegateQueue)
     }()
     
     var isRunning = false
     
-    private var connectedSockets: [GCDAsyncSocket] = []
     private var currentRequests: [String: FCGIRequest] = [:]
     
     
@@ -90,7 +89,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
             currentRequests[globalRequestID] = request
             objc_sync_exit(currentRequests)
             
-            socket.readDataToLength(FCGIRecordFixedLengthPartLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
+            socket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
         case .Params:
             objc_sync_enter(currentRequests)
             let maybeRequest = currentRequests[globalRequestID]
@@ -110,7 +109,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                     paramsAvailableHandler?(request)
                 }
                 
-                socket.readDataToLength(FCGIRecordFixedLengthPartLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
+                socket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
             }
         case .Stdin:
             objc_sync_enter(currentRequests)
@@ -130,9 +129,9 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                     if let responseData = response.responseData {
                         request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
                     }
-                    
-                    request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
                 }
+                
+                request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
                 
                 objc_sync_enter(currentRequests)
                 currentRequests.removeValueForKey(globalRequestID)
@@ -153,22 +152,11 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
         let acceptedSocketQueue = dispatch_queue_create("SocketAcceptQueue-\(newSocket.connectedPort)", DISPATCH_QUEUE_SERIAL)
         newSocket.delegateQueue = acceptedSocketQueue
         
-        objc_sync_enter(connectedSockets)
-        connectedSockets.append(newSocket)
-        objc_sync_exit(connectedSockets)
-        
-        newSocket.readDataToLength(FCGIRecordFixedLengthPartLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
+        newSocket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
     }
     
     public func socketDidDisconnect(sock: GCDAsyncSocket!, withError err: NSError!) {
-        objc_sync_enter(connectedSockets)
-        for (var i = 0; i < connectedSockets.count; ++i) {
-            if connectedSockets[i] == sock {
-                connectedSockets.removeAtIndex(i)
-                break
-            }
-        }
-        objc_sync_exit(connectedSockets)
+        recordContext[sock] = nil
     }
     
     public func socket(sock: GCDAsyncSocket!, didReadData data: NSData!, withTag tag: Int) {
@@ -182,7 +170,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                         handleRecord(record, fromSocket: sock)
                     } else {
                         // Read additional content
-                        recordContext = record
+                        recordContext[sock] = record
                         sock.readDataToLength(UInt(record.contentLength) + UInt(record.paddingLength), withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingContentAndPaddingTag.rawValue)
                     }
                 } else {
@@ -190,10 +178,10 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                     sock.disconnect()
                 }
             case .AwaitingContentAndPaddingTag:
-                if let record = recordContext {
+                if let record = recordContext[sock] {
                     record.processContentData(data)
                     handleRecord(record, fromSocket: sock)
-                    recordContext = nil
+                    recordContext[sock] = nil
                 } else {
                     NSLog("ERROR: Case .AwaitingContentAndPaddingTag hit with no context")
                 }

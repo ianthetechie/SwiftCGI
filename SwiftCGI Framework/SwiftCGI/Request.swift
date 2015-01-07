@@ -30,8 +30,8 @@
 
 import Foundation
 
-let FCGIRecordFixedLengthPartLength: UInt = 8
-let FCGITimeout: NSTimeInterval = -1
+let FCGIRecordHeaderLength: UInt = 8
+let FCGITimeout: NSTimeInterval = 5
 
 public class FCGIRequest {
     let record: BeginRequestRecord
@@ -68,7 +68,7 @@ public class FCGIRequest {
             socket.writeData(outRecord.fcgiPacketData, withTimeout: 5, tag: 0)
             
             if keepConnection {
-                socket.readDataToLength(FCGIRecordFixedLengthPartLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
+                socket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
             } else {
                 socket.disconnectAfterWriting()
             }
