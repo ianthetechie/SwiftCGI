@@ -37,8 +37,8 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     // MARK: Properties
     
     let port: UInt16
-    public var paramsAvailableHandler: FCGIRequestHandler?
-    public var stdinAvailableHandler: FCGIRequestHandler?
+    public var paramsAvailableHandler: (FCGIRequest -> Void)?
+    public var requestHandler: FCGIRequestHandler
     
     let delegateQueue: dispatch_queue_t
     var recordContext: FCGIRecord?
@@ -54,8 +54,9 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     
     // MARK: Init
     
-    public init(port: UInt16) {
+    public init(port: UInt16, requestHandler: FCGIRequestHandler) {
         self.port = port
+        self.requestHandler = requestHandler
         
         delegateQueue = dispatch_queue_create("SocketAcceptQueue", DISPATCH_QUEUE_SERIAL)
     }
@@ -125,7 +126,13 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                     request.streamData!.appendData(recordData)
                 }
                 
-                stdinAvailableHandler?(request)
+                if let response = requestHandler(request) {
+                    if let responseData = response.responseData {
+                        request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
+                    }
+                    
+                    request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
+                }
                 
                 objc_sync_enter(currentRequests)
                 currentRequests.removeValueForKey(globalRequestID)

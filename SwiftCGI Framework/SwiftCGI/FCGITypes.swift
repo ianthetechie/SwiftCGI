@@ -34,7 +34,7 @@ import Foundation
 // MARK: Public types
 
 public typealias FCGIRequestParams = [String: String]
-public typealias FCGIRequestHandler = FCGIRequest -> Void
+public typealias FCGIRequestHandler = FCGIRequest -> HTTPResponse?
 
 public typealias FCGIApplicationStatus = UInt32
 

@@ -30,6 +30,9 @@
 
 import Foundation
 
+private let HTTPNewline = "\r\n"
+private let HTTPTerminator = "\r\n\r\n"
+
 public struct HTTPResponse {
     // MARK: Stored Properties
     
@@ -42,7 +45,12 @@ public struct HTTPResponse {
     
     public var contentLength: Int { return countElements(body.utf8) }
     public var headerString: String {
-        return "HTTP/1.1 \(status.rawValue) \(status.description)\r\nContent-Type: \(contentType.rawValue)\r\nContent-Length: \(contentLength)\r\n\r\n"
+        let headers = [
+            "HTTP/1.1 \(status.rawValue) \(status.description)",
+            "Content-Type: \(contentType.rawValue)",
+            "Content-Length: \(contentLength)"
+        ]
+        return HTTPNewline.join(headers) + HTTPTerminator
     }
     public var responseData: NSData? {
         let responseString = headerString + body as NSString

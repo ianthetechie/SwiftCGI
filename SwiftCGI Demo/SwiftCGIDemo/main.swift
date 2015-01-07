@@ -31,19 +31,8 @@
 import Foundation
 import SwiftCGI
 
-let server = FCGIServer(port: 9000)
-
-server.paramsAvailableHandler = { request in
-    
-}
-
-server.stdinAvailableHandler = { request in
-    let response = HTTPResponse(status: .OK, contentType: .TextPlain, body: "안녕하세요, Swifter! The time is now \(NSDate())")
-    if let responseData = response.responseData {
-        request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
-    }
-    
-    request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
+let server = FCGIServer(port: 9000) { request in
+    HTTPResponse(status: .OK, contentType: .TextPlain, body: "안녕하세요, Swifter! The time is now \(NSDate())")
 }
 
 println("Starting SwiftCGI Server")
