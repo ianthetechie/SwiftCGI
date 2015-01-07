@@ -1,5 +1,5 @@
 //
-//  Meta.swift
+//  Record.swift
 //  SwiftCGI
 //
 //  Copyright (c) 2014, Ian Wagner
@@ -30,10 +30,10 @@
 
 import Foundation
 
-// MARK: Meta structs
+// MARK: Record classes
 
 // Base struct (should never be directly instantiated)
-class FCGIMeta {
+class FCGIRecord {
     // NOTE: As of this writing, the Swift compiler will throw an error
     // about uninitialized stored properties, due to the failable nature
     // of the initializer. This is of course rubbish, as there is no point
@@ -44,7 +44,7 @@ class FCGIMeta {
     let requestID: FCGIRequestId!
 
     // A public getter exposes the private constant storage because certain types
-    // of meta subclasses are used for incoming data (in which the content length
+    // of record subclasses are used for incoming data (in which the content length
     // is known at instantiation), and others compute content length before
     // sending a packet.
     let _initContentLength: FCGIContentLength!
@@ -52,7 +52,7 @@ class FCGIMeta {
     
     let paddingLength: FCGIPaddingLength!
     
-    var type: FCGIMetaType { fatalError("Not Implemented") }
+    var type: FCGIRecordType { fatalError("Not Implemented") }
     
     var fcgiPacketData: NSData {
         var bytes = [UInt8](count: 8, repeatedValue: 0)
@@ -84,12 +84,12 @@ class FCGIMeta {
     }
 }
 
-// Begin request meta
-class BeginRequestMeta: FCGIMeta {
+// Begin request record
+class BeginRequestRecord: FCGIRecord {
     var role: FCGIRequestRole!
     var flags: FCGIRequestFlags!
     
-    override var type: FCGIMetaType { return .BeginRequest }
+    override var type: FCGIRecordType { return .BeginRequest }
     
     override func processContentData(data: NSData) {
         let rawRole = readUInt16FromBigEndianData(data, atIndex: 0)
@@ -104,12 +104,12 @@ class BeginRequestMeta: FCGIMeta {
     }
 }
 
-// End request meta
-class EndRequestMeta: FCGIMeta {
+// End request record
+class EndRequestRecord: FCGIRecord {
     let applicationStatus: FCGIApplicationStatus
     let protocolStatus: FCGIProtocolStatus
     
-    override var type: FCGIMetaType { return .EndRequest }
+    override var type: FCGIRecordType { return .EndRequest }
     override var contentLength: FCGIContentLength { return 8 }  // Fixed value for this type
     
     init(version: FCGIVersion, requestID: FCGIRequestId, paddingLength: FCGIPaddingLength, protocolStatus: FCGIProtocolStatus, applicationStatus: FCGIApplicationStatus) {
@@ -138,22 +138,22 @@ class EndRequestMeta: FCGIMeta {
     }
 }
 
-// Data meta
-class ByteStreamMeta: FCGIMeta {
+// Data record
+class ByteStreamRecord: FCGIRecord {
     private var _rawData: NSData?
     var rawData: NSData? { return _rawData }
     
     override var contentLength: FCGIContentLength { return FCGIContentLength(_rawData?.length ?? 0) }
     
-    var _type: FCGIMetaType = .Stdin
-    override var type: FCGIMetaType {
+    var _type: FCGIRecordType = .Stdin
+    override var type: FCGIRecordType {
         get { return _type }
         set {
             switch newValue {
             case .Stdin, .Stdout, .Stderr:
                 _type = newValue
             default:
-                fatalError("ByteStreamMeta.type can only be .Stdin .Stdout or .Stderr")
+                fatalError("ByteStreamRecord.type can only be .Stdin .Stdout or .Stderr")
             }
         }
     }
@@ -175,14 +175,14 @@ class ByteStreamMeta: FCGIMeta {
     }
 }
 
-// Params meta
-class ParamsMeta: FCGIMeta {
+// Params record
+class ParamsRecord: FCGIRecord {
     // This stored property is an implicitly unwrapped optional so that we can
     // call super.init early on in the init process to retrieve the content length
     private var _params: FCGIRequestParams?
     var params: FCGIRequestParams? { return _params }    // read-only accessor
     
-    override var type: FCGIMetaType { return .Params }
+    override var type: FCGIRecordType { return .Params }
     
     override func processContentData(data: NSData) {
         var paramData: [String: String] = [:]
@@ -282,7 +282,7 @@ func readUInt16FromBigEndianData(data: NSData, atIndex index: Int) -> UInt16 {
     return CFSwapInt16BigToHost(bigUInt16)
 }
 
-func createMetaFromHeaderData(data: NSData) -> FCGIMeta? {
+func createRecordFromHeaderData(data: NSData) -> FCGIRecord? {
     // Check the length of the data
     if data.length == 8 {
         // Parse the version number
@@ -294,10 +294,10 @@ func createMetaFromHeaderData(data: NSData) -> FCGIMeta? {
             switch version {
             case .Version1:
                 // Parse the request type
-                var rawType: FCGIMetaType.RawValue = 0
+                var rawType: FCGIRecordType.RawValue = 0
                 data.getBytes(&rawType, range: NSMakeRange(1, 1))
                 
-                if let type = FCGIMetaType(rawValue: rawType) {
+                if let type = FCGIRecordType(rawValue: rawType) {
                     // Parse the request ID
                     let requestID = readUInt16FromBigEndianData(data, atIndex: 2)
                     
@@ -310,11 +310,11 @@ func createMetaFromHeaderData(data: NSData) -> FCGIMeta? {
                     
                     switch type {
                     case .BeginRequest:
-                        return BeginRequestMeta(version: version, requestID: requestID, contentLength: contentLength, paddingLength: paddingLength)
+                        return BeginRequestRecord(version: version, requestID: requestID, contentLength: contentLength, paddingLength: paddingLength)
                     case .Params:
-                        return ParamsMeta(version: version, requestID: requestID, contentLength: contentLength, paddingLength: paddingLength)
+                        return ParamsRecord(version: version, requestID: requestID, contentLength: contentLength, paddingLength: paddingLength)
                     case .Stdin:
-                        return ByteStreamMeta(version: version, requestID: requestID, contentLength: contentLength, paddingLength: paddingLength)
+                        return ByteStreamRecord(version: version, requestID: requestID, contentLength: contentLength, paddingLength: paddingLength)
                     default:
                         return nil
                     }

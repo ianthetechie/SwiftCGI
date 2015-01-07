@@ -41,7 +41,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     public var stdinAvailableHandler: FCGIRequestHandler?
     
     let delegateQueue: dispatch_queue_t
-    var metaContext: FCGIMeta?
+    var recordContext: FCGIRecord?
     lazy var listener: GCDAsyncSocket = {
         GCDAsyncSocket(delegate: self, delegateQueue: self.delegateQueue)
     }()
@@ -72,17 +72,17 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
         }
     }
     
-    func handleMeta(meta: FCGIMeta, fromSocket socket: GCDAsyncSocket) {
-        let globalRequestID = "\(meta.requestID)-\(socket.connectedPort)"
+    func handleRecord(record: FCGIRecord, fromSocket socket: GCDAsyncSocket) {
+        let globalRequestID = "\(record.requestID)-\(socket.connectedPort)"
         
         
-        // switch on meta.type, since types can be mapped 1:1 to an FCGIMeta
+        // switch on record.type, since types can be mapped 1:1 to an FCGIRecord
         // subclass. This allows for a much cleaner chunk of code than a handful
         // of if/else ifs chained together, and allows the compiler to check that
         // we have covered all cases
-        switch meta.type {
+        switch record.type {
         case .BeginRequest:
-            let request = FCGIRequest(meta: meta as BeginRequestMeta)
+            let request = FCGIRequest(record: record as BeginRequestRecord)
             request.socket = socket
             
             objc_sync_enter(currentRequests)
@@ -96,7 +96,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
             objc_sync_exit(currentRequests)
             
             if let request = maybeRequest {
-                if let params = (meta as ParamsMeta).params {
+                if let params = (record as ParamsRecord).params {
                     if request.params == nil {
                         request.params = [:]
                     }
@@ -121,8 +121,8 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                     request.streamData = NSMutableData(capacity: 65536)
                 }
                 
-                if let metaData = (meta as ByteStreamMeta).rawData {
-                    request.streamData!.appendData(metaData)
+                if let recordData = (record as ByteStreamRecord).rawData {
+                    request.streamData!.appendData(recordData)
                 }
                 
                 stdinAvailableHandler?(request)
@@ -131,10 +131,10 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                 currentRequests.removeValueForKey(globalRequestID)
                 objc_sync_exit(currentRequests)
             } else {
-                NSLog("WARNING: handleMeta called for invalid requestID")
+                NSLog("WARNING: handleRecord called for invalid requestID")
             }
         default:
-            fatalError("ERROR: handleMeta called with an invalid FCGIMeta type")
+            fatalError("ERROR: handleRecord called with an invalid FCGIRecord type")
         }
     }
     
@@ -169,24 +169,24 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
             switch socketTag {
             case .AwaitingHeaderTag:
                 // Phase 1 of 2 possible phases; first, try to parse the header
-                if let meta = createMetaFromHeaderData(data) {
-                    if meta.contentLength == 0 {
+                if let record = createRecordFromHeaderData(data) {
+                    if record.contentLength == 0 {
                         // No content; handle the message
-                        handleMeta(meta, fromSocket: sock)
+                        handleRecord(record, fromSocket: sock)
                     } else {
                         // Read additional content
-                        metaContext = meta
-                        sock.readDataToLength(UInt(meta.contentLength) + UInt(meta.paddingLength), withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingContentAndPaddingTag.rawValue)
+                        recordContext = record
+                        sock.readDataToLength(UInt(record.contentLength) + UInt(record.paddingLength), withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingContentAndPaddingTag.rawValue)
                     }
                 } else {
-                    NSLog("ERROR: Unable to construct request meta")
+                    NSLog("ERROR: Unable to construct request record")
                     sock.disconnect()
                 }
             case .AwaitingContentAndPaddingTag:
-                if let meta = metaContext {
-                    meta.processContentData(data)
-                    handleMeta(meta, fromSocket: sock)
-                    metaContext = nil
+                if let record = recordContext {
+                    record.processContentData(data)
+                    handleRecord(record, fromSocket: sock)
+                    recordContext = nil
                 } else {
                     NSLog("ERROR: Case .AwaitingContentAndPaddingTag hit with no context")
                 }

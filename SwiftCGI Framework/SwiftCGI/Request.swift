@@ -34,26 +34,26 @@ let FCGIRecordFixedLengthPartLength: UInt = 8
 let FCGITimeout: NSTimeInterval = -1
 
 public class FCGIRequest {
-    let meta: BeginRequestMeta
+    let record: BeginRequestRecord
     let keepConnection: Bool
     
     var params: FCGIRequestParams!  // Set externally and never reset to nil thereafter
     var socket: GCDAsyncSocket!     // Set externally by the server
     var streamData: NSMutableData?
     
-    init(meta: BeginRequestMeta) {
-        self.meta = meta
-        keepConnection = meta.flags & FCGIRequestFlags.KeepConnection ? true : false
+    init(record: BeginRequestRecord) {
+        self.record = record
+        keepConnection = record.flags & FCGIRequestFlags.KeepConnection ? true : false
     }
     
     // WARNING: I think this will fail with data size > 64k
     public func writeData(data: NSData, toStream stream: FCGIOutputStream) -> Bool {
         if socket != nil {
-            let outMeta = ByteStreamMeta(version: meta.version, requestID: meta.requestID, contentLength: UInt16(data.length), paddingLength: 0)
-            outMeta.setRawData(data)
-            if let streamType = FCGIMetaType(rawValue: stream.rawValue) {
-                outMeta.type = streamType
-                socket.writeData(outMeta.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
+            let outRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: UInt16(data.length), paddingLength: 0)
+            outRecord.setRawData(data)
+            if let streamType = FCGIRecordType(rawValue: stream.rawValue) {
+                outRecord.type = streamType
+                socket.writeData(outRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
                 return true
             }
         }
@@ -64,8 +64,8 @@ public class FCGIRequest {
     
     public func finishWithProtocolStatus(protocolStatus: FCGIProtocolStatus, andApplicationStatus applicationStatus: FCGIApplicationStatus) -> Bool {
         if socket != nil {
-            let outMeta = EndRequestMeta(version: meta.version, requestID: meta.requestID, paddingLength: 0, protocolStatus: protocolStatus, applicationStatus: applicationStatus)
-            socket.writeData(outMeta.fcgiPacketData, withTimeout: 5, tag: 0)
+            let outRecord = EndRequestRecord(version: record.version, requestID: record.requestID, paddingLength: 0, protocolStatus: protocolStatus, applicationStatus: applicationStatus)
+            socket.writeData(outRecord.fcgiPacketData, withTimeout: 5, tag: 0)
             
             if keepConnection {
                 socket.readDataToLength(FCGIRecordFixedLengthPartLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)

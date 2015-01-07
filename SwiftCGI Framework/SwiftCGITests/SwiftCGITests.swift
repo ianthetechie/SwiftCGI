@@ -61,15 +61,15 @@ class SwiftCGITests: XCTestCase {
     }
     
     
-    // MARK: Meta tests
+    // MARK: Record tests
     
-    // TODO: BeginRequestMeta
+    // TODO: BeginRequestRecord
     
-    func testEndRequestMeta() {
-        let meta = EndRequestMeta(version: .Version1, requestID: 1, paddingLength: 0, protocolStatus: .RequestComplete, applicationStatus: 0)
-        XCTAssertEqual(meta.type, FCGIMetaType.EndRequest, "Incorrect end request meta type")
+    func testEndRequestRecord() {
+        let record = EndRequestRecord(version: .Version1, requestID: 1, paddingLength: 0, protocolStatus: .RequestComplete, applicationStatus: 0)
+        XCTAssertEqual(record.type, FCGIRecordType.EndRequest, "Incorrect end request record type")
         
-        let fcgiData = meta.fcgiPacketData
+        let fcgiData = record.fcgiPacketData
         XCTAssertEqual(fcgiData.length, 16, "Incorrect packet data length")
         
         // Get the data as raw bytes for ease of verification
@@ -79,17 +79,17 @@ class SwiftCGITests: XCTestCase {
         
         // Verify the header bytes
         XCTAssertEqual(bytes[0], FCGIVersion.Version1.rawValue, "Incorrect FCGI version")
-        XCTAssertEqual(bytes[1], meta.type.rawValue, "Incorrect type")
+        XCTAssertEqual(bytes[1], record.type.rawValue, "Incorrect type")
         
-        let (requestIDMSB, requestIDLSB) = meta.requestID.decomposeBigEndian()
+        let (requestIDMSB, requestIDLSB) = record.requestID.decomposeBigEndian()
         XCTAssertEqual(bytes[2], requestIDMSB, "Incorrect request ID MSB")
         XCTAssertEqual(bytes[3], requestIDLSB, "Incorrect request ID LSB")
         
-        let (contentLengthMSB, contentLengthLSB) = meta.contentLength.decomposeBigEndian()
+        let (contentLengthMSB, contentLengthLSB) = record.contentLength.decomposeBigEndian()
         XCTAssertEqual(bytes[4], contentLengthMSB, "Incorrect content length MSB")
         XCTAssertEqual(bytes[5], contentLengthLSB, "Incorrect content length LSB")
         
-        XCTAssertEqual(bytes[6], meta.paddingLength, "Incorrect padding length")
+        XCTAssertEqual(bytes[6], record.paddingLength, "Incorrect padding length")
         XCTAssertEqual(bytes[7], UInt8(0), "Incorrect reserved byte")
         
         
@@ -99,7 +99,7 @@ class SwiftCGITests: XCTestCase {
         XCTAssertEqual(bytes[10], UInt8(0), "Incorrect application status byte 3")
         XCTAssertEqual(bytes[11], UInt8(0), "Incorrect application status byte 4")
         
-        XCTAssertEqual(bytes[12], meta.protocolStatus.rawValue, "Incorrect protocol status")
+        XCTAssertEqual(bytes[12], record.protocolStatus.rawValue, "Incorrect protocol status")
         XCTAssertEqual(bytes[13], UInt8(0), "Incorrect reserved byte")
         XCTAssertEqual(bytes[14], UInt8(0), "Incorrect reserved byte")
         XCTAssertEqual(bytes[15], UInt8(0), "Incorrect reserved byte")

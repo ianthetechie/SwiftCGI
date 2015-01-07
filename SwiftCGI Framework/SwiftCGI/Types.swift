@@ -74,7 +74,7 @@ enum FCGIRequestRole: UInt16 {
     //case Filter = 3
 }
 
-enum FCGIMetaType: UInt8 {
+enum FCGIRecordType: UInt8 {
     case BeginRequest = 1
     case AbortRequest = 2
     case EndRequest = 3
