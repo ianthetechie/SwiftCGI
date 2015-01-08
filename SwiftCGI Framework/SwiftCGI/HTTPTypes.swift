@@ -58,4 +58,5 @@ public enum HTTPStatus: HTTPStatusCode {
 public enum ContentType: String {
     case TextHTML = "text/html"
     case TextPlain = "text/plain"
+    case ApplicationJSON = "application/json"
 }
