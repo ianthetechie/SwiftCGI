@@ -31,18 +31,6 @@
 import Foundation
 import SwiftCGI
 
-let server = FCGIServer(port: 9000) { request in
+runServerUntilKilled(requestHandler: { request in
     HTTPResponse(status: .OK, contentType: .TextPlain, body: "안녕하세요, Swifter! The time is now \(NSDate())")
-}
-
-var err: NSError?
-server.startWithError(&err)
-
-if let error = err {
-    println("Failed to start SwiftCGI server")
-    println(err)
-    exit(1)
-} else {
-    println("Started SwiftCGI server on port \(server.port)")
-    dispatch_main()
-}
+})

@@ -46,8 +46,6 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
         GCDAsyncSocket(delegate: self, delegateQueue: self.delegateQueue)
     }()
     
-    var isRunning = false
-    
     private var currentRequests: [String: FCGIRequest] = [:]
     
     
@@ -65,7 +63,6 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     
     public func startWithError(errorPtr: NSErrorPointer) -> Bool {
         if listener.acceptOnPort(port, error: errorPtr) {
-            isRunning = true
             return true
         } else {
             return false
@@ -190,5 +187,23 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
             NSLog("ERROR: Unknown socket tag")
             sock.disconnect()
         }
+    }
+}
+
+// Convenience funciton, since you really shouldn't have to manually construct
+// a server instance and crap
+public func runServerUntilKilled(port: UInt16 = 9000, #requestHandler: FCGIRequestHandler) {
+    let server = FCGIServer(port: port, requestHandler: requestHandler)
+    
+    var err: NSError?
+    server.startWithError(&err)
+    
+    if let error = err {
+        println("Failed to start SwiftCGI server")
+        println(err)
+        exit(1)
+    } else {
+        println("Started SwiftCGI server on port \(server.port)")
+        dispatch_main()
     }
 }
