@@ -124,6 +124,9 @@ class EndRequestRecord: FCGIRecord {
         
         var extraBytes = [UInt8](count: 8, repeatedValue: 0)
         
+        // TODO: This bit twiddling should be abstracted into an extension on
+        // UInt32 that can decompose the bits for either endianness (like the
+        // existing UInt16 category).
         let bigEndianApplicationStatus = CFSwapInt32HostToBig(applicationStatus)
         extraBytes[0] = UInt8((bigEndianApplicationStatus >> 0) & 0xFF)
         extraBytes[1] = UInt8((bigEndianApplicationStatus >> 8) & 0xFF)

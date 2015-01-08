@@ -48,7 +48,9 @@ public class FCGIRequest {
         keepConnection = record.flags & FCGIRequestFlags.KeepConnection ? true : false
     }
     
-    // WARNING: I think this will fail with data size > 64k
+    // TODO: I'm fairly certain that this will fail with input data size > 64k.
+    // Bug inherited from FCGIKit design. Need to read how FCGI expects large
+    // responses to be split up and update this method implementation accordingly
     public func writeData(data: NSData, toStream stream: FCGIOutputStream) -> Bool {
         if socket != nil {
             let outRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: UInt16(data.length), paddingLength: 0)

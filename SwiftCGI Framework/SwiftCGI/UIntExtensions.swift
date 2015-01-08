@@ -50,3 +50,5 @@ extension UInt16 {
         return (lsb, msb)
     }
 }
+
+// TODO: extension UInt32 that does the same as the above, but for 32-bit UInts
