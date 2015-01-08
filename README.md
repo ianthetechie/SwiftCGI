@@ -3,8 +3,8 @@ An FCGI microframework in Swift
 
 ## About
 Well, the title pretty much says it all. This is a microframework (no, I'm not writing the next Django or Rails),
-and it is written in Swift (well, OK, I admit, there is a little bit of Objective-C in here because I saw no need
-to throw out the perfectly good piece of work that is GCDAsyncSocket).
+and it is written in Swift (OK, I confess, it's not 100% Swift... I saw no need to throw out the perfectly good
+piece of work that is GCDAsyncSocket, but dependencies aside, it's all Swift :D).
 
 ## Why?
 A valid question. Mostly because I was bored last weekend. Also, because I am passionate about a couple of things.
@@ -27,18 +27,27 @@ will work well with both relational and non-relational databases) and a few othe
 have as many features as Django.
 
 ## Current status
-I literally wrote this in 3 evenings of spare time. Don't judge too hard yet ;) By the end of January, I hope to
+I wrote this in a couple evenings of spare time. Don't judge too hard yet ;) By the end of January, I hope to
 reach alpha status in that it is a funcitonal base that exhibits proper modular design, is unit tested, etc.
-Right now it's a kludgey port of FCGIKit, which brings me to the credits. (NOTE: As such, the current server
-has the same limitations of FCGIKit).
+The first couple dozen or so commits will involve a lot of Swift-ifying the FCGI core, which, at least to
+start, is basically a port of FCGIKit, which brings me to the credits. (NOTE: As such, the current server
+has the same limitations of FCGIKit, and probably a few bugs as well. I've already identified and fixed several.)
 
 ## Credits
-I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of this project is a straight-up port of
-FCGIKit. It has been improved slightly already, and is a lot safer, but it's essentially FCGIKit rewritten in Swift.
-This will of course be improved upon over time, but honestly I 1) don't want to re-invent the wheel, and 2) felt
-it would be a lot safer to have a Swift FCGI server implementation rather than wrapping the FCGI C library *shudder*.
+I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of
+the base of this project is a port of FCGIKit that will be improved and Swift-ified as it is developed and "finished" (FCGIKit is a very minimal implementation, which made a great base for learning how to write an FCGI server, but will
+need to be improved upon for serious use). I feel it's a lot safer to port a minimal Obj-C implementation and go from
+there rather than trying to wrap the fcgi C library.
 
-## License
+# Getting Started
+1. Clone the repo
+2. Open the SwiftCGIDemo workspace
+3. Admire the elegance of main.swift (it's so short!!!)
+4. Switch the target to SwiftCGIDemo
+5. Run the project
+6. Configure nginx to serve fcgi from your application (localhost, port 9000, set up an endpoint, etc. nginx tutorial may come later if I get bored, but it'd probably be faster for you to just google how to set up an nginx fastcgi server)
+
+# License
 Copyright (c) 2014, Ian Wagner
 All rights reserved.
 
