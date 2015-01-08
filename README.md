@@ -46,7 +46,9 @@ it would be a lot safer to have a Swift FCGI server implementation rather than w
 5. Run the project
 6. Configure nginx to serve fcgi from your application (localhost, port 9000, set up an endpoint, etc. nginx tutorial may come later if I get bored, but it'd probably be faster for you to just google how to set up an nginx fastcgi server)
 
-## License
-This project is distributed under the terms of the 2-clause BSD license. TL;DR - if the use of this product causes
-the death of your firstborn, I'm not responsible (provided as-is; no warranty, liability, etc.) and if you redistribute
-this with or without modification, you need to credit me and copy the license along with the code.
+## License This project is distributed under the terms of the 2-clause
+BSD license. TL;DR - if the use of this product causes the death of
+your firstborn, I'm not responsible (provided as-is; no warranty,
+liability, etc.) and if you redistribute this with or without
+modification, you need to credit me and copy the license along with
+the code. Otherwise, you can pretty much do what you want ;)
