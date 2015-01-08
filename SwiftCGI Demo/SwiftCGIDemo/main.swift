@@ -32,5 +32,5 @@ import Foundation
 import SwiftCGI
 
 runServerUntilKilled(requestHandler: { request in
-    HTTPResponse(status: .OK, contentType: .TextPlain, body: "안녕하세요, Swifter! The time is now \(NSDate())")
+    return HTTPResponse(status: .OK, contentType: .TextPlain, body: "안녕하세요, Swifter! The time is now \(NSDate())")
 })

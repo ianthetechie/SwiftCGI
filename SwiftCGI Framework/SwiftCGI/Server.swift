@@ -94,13 +94,13 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
             
             if let request = maybeRequest {
                 if let params = (record as ParamsRecord).params {
-                    if request.params == nil {
-                        request.params = [:]
+                    if request._params == nil {
+                        request._params = [:]
                     }
                     
                     // Copy the values into the request params dictionary
                     for key in params.keys {
-                        request.params[key] = params[key]
+                        request._params[key] = params[key]
                     }
                 } else {
                     paramsAvailableHandler?(request)

@@ -37,7 +37,9 @@ public class FCGIRequest {
     let record: BeginRequestRecord
     let keepConnection: Bool
     
-    var params: FCGIRequestParams!  // Set externally and never reset to nil thereafter
+    var _params: FCGIRequestParams!  // Set externally and never reset to nil thereafter
+    public var params: FCGIRequestParams { return _params } // Accessor for code outside the framework
+    
     var socket: GCDAsyncSocket!     // Set externally by the server
     var streamData: NSMutableData?
     
