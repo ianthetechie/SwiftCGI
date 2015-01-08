@@ -32,15 +32,15 @@ import Cocoa
 import XCTest
 
 class PrimitiveTests: XCTestCase {
-    func testDecomposeBigEndian() {
-        // Test the big endian byte decomposition methods
+    func testUInt16DecomposeBigEndian() {
+        // Test the big endian byte decomposition methods for UInt16
         let (msb, lsb) = UInt16(0xF00F).decomposeBigEndian()
         XCTAssertEqual(msb, UInt8(0xF0), "MSB should be 0xF0")
         XCTAssertEqual(lsb, UInt8(0x0F), "LSB should be 0x0F")
     }
     
-    func testDecomposeLittleEndian() {
-        // Test the little endian byte decomposition methods
+    func testUInt16DecomposeLittleEndian() {
+        // Test the little endian byte decomposition methods for UInt16
         let (lsb, msb) = UInt16(0xF00F).decomposeLittleEndian()
         XCTAssertEqual(lsb, UInt8(0x0F), "LSB should be 0x0F")
         XCTAssertEqual(msb, UInt8(0xF0), "MSB should be 0xF0")
@@ -68,5 +68,23 @@ class PrimitiveTests: XCTestCase {
         
         let parsedValueWithInvalidOffset = readUInt16FromBigEndianData(bigEndianData, atIndex: 2)
         XCTAssert(originalValue != parsedValueWithInvalidOffset, "Incorrect result from readUInt16FromBigEndianData")
+    }
+    
+    func testUInt32DecomposeBigEndian() {
+        // Test the big endian byte decomposition methods for UInt32
+        let (msb, b1, b2, lsb) = UInt32(0xDEADBEEF).decomposeBigEndian()
+        XCTAssertEqual(msb, UInt8(0xDE), "MSB should be 0xDE")
+        XCTAssertEqual(b1, UInt8(0xAD), "B1 should be 0xAD")
+        XCTAssertEqual(b2, UInt8(0xBE), "B2 should be 0xBE")
+        XCTAssertEqual(lsb, UInt8(0xEF), "LSB should be 0xEF")
+    }
+    
+    func testUInt32DecomposeLittleEndian() {
+        // Test the little endian byte decomposition methods for UInt32
+        let (lsb, b1, b2, msb) = UInt32(0xDEADBEEF).decomposeLittleEndian()
+        XCTAssertEqual(lsb, UInt8(0xEF), "LSB should be 0xEF")
+        XCTAssertEqual(b1, UInt8(0xBE), "B1 should be 0xBE")
+        XCTAssertEqual(b2, UInt8(0xAD), "B2 should be 0xAD")
+        XCTAssertEqual(msb, UInt8(0xDE), "MSB should be 0xDE")
     }
 }

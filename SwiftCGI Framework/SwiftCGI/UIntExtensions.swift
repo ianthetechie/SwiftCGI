@@ -30,8 +30,9 @@
 
 import Foundation
 
-typealias MSB = UInt8
-typealias LSB = UInt8
+// Design note: yes, this is very meta, aliasing an alias, but it is readable.
+typealias MSB = Byte
+typealias LSB = Byte
 
 extension UInt16 {
     func decomposeBigEndian() -> (MSB, LSB) {
@@ -52,3 +53,24 @@ extension UInt16 {
 }
 
 // TODO: extension UInt32 that does the same as the above, but for 32-bit UInts
+extension UInt32 {
+    func decomposeBigEndian() -> (MSB, Byte, Byte, LSB) {
+        let bigEndianValue = CFSwapInt32HostToBig(self)
+        let msb = UInt8(bigEndianValue & 0xFF)
+        let b1 = UInt8((bigEndianValue >> 8) & 0xFF)
+        let b2 = UInt8((bigEndianValue >> 16) & 0xFF)
+        let lsb = UInt8((bigEndianValue >> 24) & 0xFF)
+        
+        return (msb, b1, b2, lsb)
+    }
+    
+    func decomposeLittleEndian() -> (LSB, Byte, Byte, MSB) {
+        let littleEndianValue = CFSwapInt32HostToLittle(self)
+        let lsb = UInt8(littleEndianValue & 0xFF)
+        let b1 = UInt8((littleEndianValue >> 8) & 0xFF)
+        let b2 = UInt8((littleEndianValue >> 16) & 0xFF)
+        let msb = UInt8((littleEndianValue >> 24) & 0xFF)
+        
+        return (lsb, b1, b2, msb)
+    }
+}
