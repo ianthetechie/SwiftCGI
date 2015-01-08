@@ -38,6 +38,14 @@ FCGIKit. It has been improved slightly already, and is a lot safer, but it's ess
 This will of course be improved upon over time, but honestly I 1) don't want to re-invent the wheel, and 2) felt
 it would be a lot safer to have a Swift FCGI server implementation rather than wrapping the FCGI C library *shudder*.
 
+# Getting Started
+1. Clone the repo
+2. Open the SwiftCGIDemo workspace
+3. Admire the elegance of main.swift (it's so short!!!)
+4. Switch the target to SwiftCGIDemo
+5. Run the project
+6. Configure nginx to serve fcgi from your application (localhost, port 9000, set up an endpoint, etc. nginx tutorial may come later if I get bored, but it'd probably be faster for you to just google how to set up an nginx fastcgi server)
+
 ## License
 This project is distributed under the terms of the 2-clause BSD license. TL;DR - if the use of this product causes
 the death of your firstborn, I'm not responsible (provided as-is; no warranty, liability, etc.) and if you redistribute
