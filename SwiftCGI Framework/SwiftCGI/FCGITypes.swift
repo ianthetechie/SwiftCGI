@@ -53,7 +53,7 @@ public enum FCGIProtocolStatus: UInt8 {
 
 // MARK: Private types
 
-typealias FCGIRequestId = UInt16
+typealias FCGIRequestID = UInt16
 typealias FCGIContentLength = UInt16
 typealias FCGIPaddingLength = UInt8
 typealias FCGIShortNameLength = UInt8

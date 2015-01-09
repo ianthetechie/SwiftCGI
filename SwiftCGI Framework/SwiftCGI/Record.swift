@@ -41,7 +41,7 @@ class FCGIRecord {
     // failed early on, so these properties are marked as implicitly unwrapped
     // optionals... for now...
     let version: FCGIVersion!
-    let requestID: FCGIRequestId!
+    let requestID: FCGIRequestID!
 
     // A public getter exposes the private constant storage because certain types
     // of record subclasses are used for incoming data (in which the content length
@@ -72,7 +72,7 @@ class FCGIRecord {
         return NSData(bytes: &bytes, length: 8)
     }
     
-    init(version: FCGIVersion, requestID: FCGIRequestId, contentLength: FCGIContentLength, paddingLength: FCGIPaddingLength) {
+    init(version: FCGIVersion, requestID: FCGIRequestID, contentLength: FCGIContentLength, paddingLength: FCGIPaddingLength) {
         self.version = version
         self.requestID = requestID
         self._initContentLength = contentLength
@@ -112,7 +112,7 @@ class EndRequestRecord: FCGIRecord {
     override var type: FCGIRecordType { return .EndRequest }
     override var contentLength: FCGIContentLength { return 8 }  // Fixed value for this type
     
-    init(version: FCGIVersion, requestID: FCGIRequestId, paddingLength: FCGIPaddingLength, protocolStatus: FCGIProtocolStatus, applicationStatus: FCGIApplicationStatus) {
+    init(version: FCGIVersion, requestID: FCGIRequestID, paddingLength: FCGIPaddingLength, protocolStatus: FCGIProtocolStatus, applicationStatus: FCGIApplicationStatus) {
         self.applicationStatus = applicationStatus
         self.protocolStatus = protocolStatus
         
