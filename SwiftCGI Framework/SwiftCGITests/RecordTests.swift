@@ -10,12 +10,8 @@ import Foundation
 import XCTest
 
 class RecordTests: XCTestCase {
-    func testBeginRequestRecord() {
-        let record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
-        XCTAssertEqual(record.type, FCGIRecordType.BeginRequest, "Incorrect record type")
-        
+    func verifyBasicInfoAndHeaderForRecord(record: FCGIRecord) {
         let fcgiData = record.fcgiPacketData
-        XCTAssertEqual(fcgiData.length, 8, "Incorrect packet data length")
         
         // Get the data as raw bytes for ease of verification
         var bytes = [UInt8](count: 8, repeatedValue: 0)
@@ -36,7 +32,14 @@ class RecordTests: XCTestCase {
         
         XCTAssertEqual(bytes[6], record.paddingLength, "Incorrect padding length")
         XCTAssertEqual(bytes[7], UInt8(0), "Incorrect reserved byte")
+    }
+    
+    func testBeginRequestRecord() {
+        let record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
+        verifyBasicInfoAndHeaderForRecord(record)
+        XCTAssertEqual(record.type, FCGIRecordType.BeginRequest, "Incorrect record type")
         
+        XCTAssertEqual(record.fcgiPacketData.length, 8, "Incorrect packet data length")
         
         // Verify that the processContentData function works correctly
         let role = FCGIRequestRole.Responder
@@ -57,6 +60,8 @@ class RecordTests: XCTestCase {
     
     func testEndRequestRecord() {
         let record = EndRequestRecord(version: .Version1, requestID: 1, paddingLength: 0, protocolStatus: .RequestComplete, applicationStatus: 0)
+        
+        verifyBasicInfoAndHeaderForRecord(record)
         XCTAssertEqual(record.type, FCGIRecordType.EndRequest, "Incorrect record type")
         
         let fcgiData = record.fcgiPacketData
@@ -66,24 +71,7 @@ class RecordTests: XCTestCase {
         var bytes = [UInt8](count: 16, repeatedValue: 0)
         fcgiData.getBytes(&bytes, length: 16)
         
-        
-        // Verify the header bytes
-        XCTAssertEqual(bytes[0], FCGIVersion.Version1.rawValue, "Incorrect FCGI version")
-        XCTAssertEqual(bytes[1], record.type.rawValue, "Incorrect type")
-        
-        let (requestIDMSB, requestIDLSB) = record.requestID.decomposeBigEndian()
-        XCTAssertEqual(bytes[2], requestIDMSB, "Incorrect request ID MSB")
-        XCTAssertEqual(bytes[3], requestIDLSB, "Incorrect request ID LSB")
-        
-        let (contentLengthMSB, contentLengthLSB) = record.contentLength.decomposeBigEndian()
-        XCTAssertEqual(bytes[4], contentLengthMSB, "Incorrect content length MSB")
-        XCTAssertEqual(bytes[5], contentLengthLSB, "Incorrect content length LSB")
-        
-        XCTAssertEqual(bytes[6], record.paddingLength, "Incorrect padding length")
-        XCTAssertEqual(bytes[7], UInt8(0), "Incorrect reserved byte")
-        
-        
-        // Verify the remaining block of data
+        // Verify the extra block of data after the header
         XCTAssertEqual(bytes[8], UInt8(0), "Incorrect application status byte 1")
         XCTAssertEqual(bytes[9], UInt8(0), "Incorrect application status byte 2")
         XCTAssertEqual(bytes[10], UInt8(0), "Incorrect application status byte 3")
@@ -95,7 +83,43 @@ class RecordTests: XCTestCase {
         XCTAssertEqual(bytes[15], UInt8(0), "Incorrect reserved byte")
     }
     
-    // TODO: ByteStreamRecord
+    func testByteStreamRecord() {
+        let record = ByteStreamRecord(version: .Version1, requestID: 1, contentLength: 0, paddingLength: 0)
+        
+        verifyBasicInfoAndHeaderForRecord(record)
+        XCTAssertEqual(record.type, FCGIRecordType.Stdin, "Incorrect record type")
+        
+        XCTAssertEqual(record.fcgiPacketData.length, 8, "Incorrect packet data length (before processContentData)")
+        
+        // Generate some random data
+        let numBytes = 16
+        var bytes = [UInt8](count: numBytes, repeatedValue: 0)
+        for i in 0..<numBytes {
+            bytes[i] = UInt8(rand() % 255)
+        }
+        
+        // Load it into the record
+        let byteData = NSData(bytes: &bytes, length: numBytes)
+        record.processContentData(byteData)
+        
+        // This should still be 8, since we kindof initialized the packet with
+        // contentLength of zero ;)
+        XCTAssertEqual(record.fcgiPacketData.length, 8, "Incorrect packet data length (after processContentData)")
+        
+        // NOW we manually set the data
+        record.setRawData(byteData)
+        XCTAssertEqual(record.contentLength, UInt16(numBytes), "Incorrect content length (after setRawData)")
+        XCTAssertEqual(record.fcgiPacketData.length, 8 + numBytes, "Incorrect packet data length (after setRawData)")
+        
+        let fcgiData = record.fcgiPacketData
+        var fcgiBytes = [UInt8](count: numBytes, repeatedValue: 0)
+        fcgiData.getBytes(&fcgiBytes, range: NSMakeRange(8, numBytes))
+        
+        // Verify that the data is correct
+        for i in 0..<numBytes {
+            XCTAssertEqual(bytes[i], fcgiBytes[i], "Incorrect byte encountered")
+        }
+    }
     
     // TODO: ParamsRecord
     
