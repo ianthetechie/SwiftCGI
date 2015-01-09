@@ -48,21 +48,33 @@ public class FCGIRequest {
         keepConnection = record.flags & FCGIRequestFlags.KeepConnection ? true : false
     }
     
-    // TODO: I'm fairly certain that this will fail with input data size > 64k.
-    // Bug inherited from FCGIKit design. Need to read how FCGI expects large
-    // responses to be split up and update this method implementation accordingly
     public func writeData(data: NSData, toStream stream: FCGIOutputStream) -> Bool {
         if socket != nil {
-            let outRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: UInt16(data.length), paddingLength: 0)
-            outRecord.setRawData(data)
             if let streamType = FCGIRecordType(rawValue: stream.rawValue) {
-                outRecord.type = streamType
-                socket.writeData(outRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
+                var remainingData = data.mutableCopy() as NSMutableData
+                while remainingData.length > 0 {
+                    let chunk = remainingData.subdataWithRange(NSMakeRange(0, min(remainingData.length, 65535)))
+                    let outRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: UInt16(chunk.length), paddingLength: 0)
+                    outRecord.setRawData(chunk)
+                    
+                    outRecord.type = streamType
+                    socket.writeData(outRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
+                    
+                    // Remove the data we just sent from the buffer
+                    remainingData.replaceBytesInRange(NSMakeRange(0, chunk.length), withBytes: nil, length: 0)
+                }
+                
+                let termRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: 0, paddingLength: 0)
+                termRecord.type = streamType
+                socket.writeData(termRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
                 return true
+            } else {
+                NSLog("ERROR: invalid stream type")
             }
+        } else {
+            NSLog("ERROR: No socket for request")
         }
         
-        NSLog("ERROR: No socket for request")
         return false
     }
     

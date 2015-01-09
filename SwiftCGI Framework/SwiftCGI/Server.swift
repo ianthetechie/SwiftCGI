@@ -72,7 +72,6 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     func handleRecord(record: FCGIRecord, fromSocket socket: GCDAsyncSocket) {
         let globalRequestID = "\(record.requestID)-\(socket.connectedPort)"
         
-        
         // switch on record.type, since types can be mapped 1:1 to an FCGIRecord
         // subclass. This allows for a much cleaner chunk of code than a handful
         // of if/else ifs chained together, and allows the compiler to check that
@@ -120,19 +119,20 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                 
                 if let recordData = (record as ByteStreamRecord).rawData {
                     request.streamData!.appendData(recordData)
-                }
-                
-                if let response = requestHandler(request) {
-                    if let responseData = response.responseData {
-                        request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
+                } else {
+                    if let response = requestHandler(request) {
+                        if let responseData = response.responseData {
+                            request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
+                        }
                     }
+                    
+                    request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
+                    
+                    recordContext[request.socket] = nil
+                    objc_sync_enter(currentRequests)
+                    currentRequests.removeValueForKey(globalRequestID)
+                    objc_sync_exit(currentRequests)
                 }
-                
-                request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
-                
-                objc_sync_enter(currentRequests)
-                currentRequests.removeValueForKey(globalRequestID)
-                objc_sync_exit(currentRequests)
             } else {
                 NSLog("WARNING: handleRecord called for invalid requestID")
             }
@@ -178,7 +178,6 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                 if let record = recordContext[sock] {
                     record.processContentData(data)
                     handleRecord(record, fromSocket: sock)
-                    recordContext[sock] = nil
                 } else {
                     NSLog("ERROR: Case .AwaitingContentAndPaddingTag hit with no context")
                 }
