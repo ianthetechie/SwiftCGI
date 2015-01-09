@@ -42,7 +42,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     
     let delegateQueue: dispatch_queue_t
     var recordContext: [GCDAsyncSocket: FCGIRecord] = [:]
-    lazy var listener: GCDAsyncSocket = {
+    private lazy var listener: GCDAsyncSocket = {
         GCDAsyncSocket(delegate: self, delegateQueue: self.delegateQueue)
     }()
     

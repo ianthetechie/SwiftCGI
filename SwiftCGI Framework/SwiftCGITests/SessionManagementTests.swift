@@ -40,4 +40,32 @@ class SessionManagementTests: XCTestCase {
         XCTAssert(persistedSessionData != nil, "Session data was not stored")
         XCTAssert(persistedSessionData! == sessionData, "Stored session data does not match")
     }
+    
+    func testRequestSessionManager() {
+        let record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
+        record.role = FCGIRequestRole.Responder
+        record.flags = FCGIRequestFlags.allZeros
+        
+        let request = FCGIRequest(record: record)
+        request._params = [:]
+        
+        let nilManager = RequestSessionManager<TransientMemorySessionManager>(request: request)
+        XCTAssert(nilManager == nil, "Initializer should fail when there is no sessionid parameter")
+        
+        request._params["sessionid"] = "foobar"
+        
+        let manager = RequestSessionManager<TransientMemorySessionManager>(request: request)
+        XCTAssert(manager != nil, "Initializer should no longer fail")
+        
+        // Verify that we don't have a session yet
+        XCTAssert(manager!.getData() == nil, "Initial session data should be nil")
+        
+        // Verify that we can persist a key
+        let sessionData: SessionData = ["foo": "bar"]
+        manager!.setData(sessionData)
+        
+        let persistedSessionData = manager!.getData()
+        XCTAssert(persistedSessionData != nil, "Session data was not stored")
+        XCTAssert(persistedSessionData! == sessionData, "Stored session data does not match")
+    }
 }
