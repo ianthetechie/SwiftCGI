@@ -40,6 +40,19 @@ public class FCGIRequest {
     var _params: FCGIRequestParams!  // Set externally and never reset to nil thereafter
     public var params: FCGIRequestParams { return _params } // Accessor for code outside the framework
     
+    public var cookies: [String: String]? {
+        if let cookieString = params["HTTP_COOKIE"] {
+            var result: [String: String] = [:]
+            let cookieDefinitions = cookieString.componentsSeparatedByString("; ")
+            for cookie in cookieDefinitions {
+                let cookieDef = cookie.componentsSeparatedByString("=")
+                result[cookieDef[0]] = cookieDef[1]
+            }
+            return result
+        }
+        return nil
+    }
+    
     var socket: GCDAsyncSocket!     // Set externally by the server
     var streamData: NSMutableData?
     
@@ -94,5 +107,9 @@ public class FCGIRequest {
             NSLog("ERROR: No socket for request")
             return false
         }
+    }
+    
+    public func getSessionManager<T: SessionManager>() -> RequestSessionManager<T>? {
+        return RequestSessionManager<T>(request: self)
     }
 }

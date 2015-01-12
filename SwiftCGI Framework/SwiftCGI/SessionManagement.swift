@@ -28,7 +28,8 @@ public class RequestSessionManager<T: SessionManager> {
     public init?(request: FCGIRequest) {
         self.sessionManager = T.sharedInstance()
         
-        if let id = request.params["sessionid"] {   // Extract the session ID
+        // TODO: this should be replaced with a property
+        if let id = request.cookies?["sessionid"] {   // Extract the session ID
             sessionID = id
         } else {
             return nil

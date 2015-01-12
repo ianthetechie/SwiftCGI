@@ -120,7 +120,17 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                 if let recordData = (record as ByteStreamRecord).rawData {
                     request.streamData!.appendData(recordData)
                 } else {
-                    if let response = requestHandler(request) {
+                    if var response = requestHandler(request) {
+                        // Add the session cookie if necessary
+                        // TODO: Replace this string everywhere in the code with a constant
+                        // TODO: Create a sessionID property on request that
+                        // will generate one automatically if one doesn't exist.
+                        // This will allow the first request that the session
+                        // is created to still write sesison variables.
+                        if request.cookies?["sessionid"] == nil {
+                            response.headers["Set-Cookie"] = "sessionid=\(NSUUID().UUIDString)"
+                        }
+                        
                         if let responseData = response.responseData {
                             request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
                         }

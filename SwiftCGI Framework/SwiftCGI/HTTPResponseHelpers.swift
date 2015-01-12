@@ -38,6 +38,7 @@ public struct HTTPResponse {
     
     public let status: HTTPStatus
     public let contentType: ContentType
+    public var headers: [String: String] = [:]    // TODO use an enumearation for the key
     public let body: String
     
     
@@ -45,12 +46,14 @@ public struct HTTPResponse {
     
     public var contentLength: Int { return countElements(body.utf8) }
     public var headerString: String {
-        let headers = [
+        // TODO: Clean this up a bit and use a dict with enumerated keys as mentioned above
+        let basicHeaders = [
             "HTTP/1.1 \(status.rawValue) \(status.description)",
             "Content-Type: \(contentType.rawValue)",
             "Content-Length: \(contentLength)"
         ]
-        return HTTPNewline.join(headers) + HTTPTerminator
+        let additionalHeaderString = HTTPNewline.join(map(self.headers, { (key, value) in "\(key): \(value)" }))
+        return HTTPNewline.join([HTTPNewline.join(basicHeaders), additionalHeaderString]) + HTTPTerminator
     }
     public var responseData: NSData? {
         let responseString = headerString + body as NSString
