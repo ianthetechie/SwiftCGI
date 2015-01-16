@@ -1,5 +1,5 @@
 # SwiftCGI
-An FCGI microframework in Swift
+An object-functional microframework for developing FCGI applications in Swift
 
 ## About
 Well, the title pretty much says it all. This is a microframework (no, I'm not writing the next Django or Rails),
