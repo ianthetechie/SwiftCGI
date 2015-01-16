@@ -16,6 +16,8 @@
 		CE052E411A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */; };
 		CE052E431A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */; };
 		CE052E441A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */; };
+		CE57390D1A65179200AB02B8 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE57390C1A65179200AB02B8 /* Util.swift */; };
+		CE57390E1A65197B00AB02B8 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE57390C1A65179200AB02B8 /* Util.swift */; };
 		CE7DFA7F1A5B6AE200221B93 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DFA7E1A5B6AE200221B93 /* Server.swift */; };
 		CED98B261A5E54710077A4EC /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED98B251A5E54710077A4EC /* SessionManagement.swift */; };
 		CED98B271A5E54710077A4EC /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED98B251A5E54710077A4EC /* SessionManagement.swift */; };
@@ -46,6 +48,7 @@
 		CE052E391A5CBAAB00F8DA34 /* UIntExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIntExtensions.swift; sourceTree = "<group>"; };
 		CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPResponseHelpers.swift; sourceTree = "<group>"; };
 		CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPTypes.swift; sourceTree = "<group>"; };
+		CE57390C1A65179200AB02B8 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		CE7DFA7E1A5B6AE200221B93 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		CED98B251A5E54710077A4EC /* SessionManagement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagement.swift; sourceTree = "<group>"; };
 		CED98B281A5E58090077A4EC /* RecordTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordTests.swift; sourceTree = "<group>"; };
@@ -116,6 +119,7 @@
 				CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */,
 				CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */,
 				CED98B251A5E54710077A4EC /* SessionManagement.swift */,
+				CE57390C1A65179200AB02B8 /* Util.swift */,
 			);
 			path = SwiftCGI;
 			sourceTree = "<group>";
@@ -273,6 +277,7 @@
 				CEEBFD781A5A57DC0014D017 /* Request.swift in Sources */,
 				CEEBFD721A5A20590014D017 /* FCGITypes.swift in Sources */,
 				CE052E3A1A5CBAAB00F8DA34 /* UIntExtensions.swift in Sources */,
+				CE57390D1A65179200AB02B8 /* Util.swift in Sources */,
 				CE052E431A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */,
 				CED98B261A5E54710077A4EC /* SessionManagement.swift in Sources */,
 			);
@@ -282,6 +287,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE57390E1A65197B00AB02B8 /* Util.swift in Sources */,
 				CEEBFD3E1A5A1D430014D017 /* PrimitiveTests.swift in Sources */,
 				CE052E411A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */,
 				CE052E3B1A5CBE1B00F8DA34 /* UIntExtensions.swift in Sources */,

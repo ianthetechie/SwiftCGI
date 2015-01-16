@@ -194,7 +194,10 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
 }
 
 // Convenience funciton, since you really shouldn't have to manually construct
-// a server instance and crap
+// a server instance and crap.
+// NOTE: This was designed for a command-line app, but at the time of this
+// writing, command-line apps + frameworks = a bomb. So... yeah... waiting
+// for Apple to fix that.
 public func runServerUntilKilled(port: UInt16 = 9000, #requestHandler: FCGIRequestHandler) {
     let server = FCGIServer(port: port, requestHandler: requestHandler)
     

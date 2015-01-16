@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 Ian Wagner. All rights reserved.
 //
 
-import AppKit
-
 public class Box<T> {
     public let unboxedValue: T
     public init(_ value: T) { self.unboxedValue = value }

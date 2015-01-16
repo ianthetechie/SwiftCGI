@@ -5,16 +5,16 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>3904B848-7121-4F30-891A-A6322A9F3F07</string>
+	<string>226AEA95-AB47-4493-9ACA-55DBEBD30EA9</string>
 	<key>IDESourceControlProjectName</key>
-	<string>SwiftCGIDemo</string>
+	<string>SwiftCGI Demo</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>C5F5259C3CDB1C6AC3C26B07B96DBA4125C7E925</key>
 		<string>https://github.com/ianthetechie/SwiftCGI.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>SwiftCGI Demo/SwiftCGIDemo.xcworkspace</string>
+	<string>SwiftCGI Demo/SwiftCGI Demo.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>C5F5259C3CDB1C6AC3C26B07B96DBA4125C7E925</key>
