@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 Ian Wagner. All rights reserved.
 //
 
-import Foundation
-
 public typealias SessionID = String
 public typealias SessionData = [String: String]
 
@@ -28,8 +26,7 @@ public class RequestSessionManager<T: SessionManager> {
     public init?(request: FCGIRequest) {
         self.sessionManager = T.sharedInstance()
         
-        // TODO: this should be replaced with a property
-        if let id = request.cookies?["sessionid"] {   // Extract the session ID
+        if let id = request.sessionID {
             sessionID = id
         } else {
             return nil

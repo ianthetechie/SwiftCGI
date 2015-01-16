@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Ian Wagner. All rights reserved.
 //
 
-import Foundation
 import XCTest
 
 class RecordTests: XCTestCase {

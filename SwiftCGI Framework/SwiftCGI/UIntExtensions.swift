@@ -28,8 +28,6 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import Foundation
-
 // Design note: yes, this is very meta, aliasing an alias, but it is readable.
 typealias MSB = Byte
 typealias LSB = Byte
@@ -52,7 +50,7 @@ extension UInt16 {
     }
 }
 
-// TODO: extension UInt32 that does the same as the above, but for 32-bit UInts
+// Does the same decomposition as the above, but for 32-bit UInts
 extension UInt32 {
     func decomposeBigEndian() -> (MSB, Byte, Byte, LSB) {
         let bigEndianValue = CFSwapInt32HostToBig(self)

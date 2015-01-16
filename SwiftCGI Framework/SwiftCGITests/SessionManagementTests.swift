@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Ian Wagner. All rights reserved.
 //
 
-import Foundation
 import XCTest
 
 class SessionManagementTests: XCTestCase {
@@ -52,7 +51,7 @@ class SessionManagementTests: XCTestCase {
         let nilManager = RequestSessionManager<TransientMemorySessionManager>(request: request)
         XCTAssert(nilManager == nil, "Initializer should fail when there is no sessionid parameter")
         
-        request._params["sessionid"] = "foobar"
+        request._params["HTTP_COOKIE"] = "sessionid=foobar"
         
         let manager = RequestSessionManager<TransientMemorySessionManager>(request: request)
         XCTAssert(manager != nil, "Initializer should no longer fail")

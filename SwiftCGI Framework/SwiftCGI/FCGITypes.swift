@@ -28,9 +28,6 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import Foundation
-
-
 // MARK: Public types
 
 public typealias FCGIRequestParams = [String: String]

@@ -28,7 +28,6 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import Foundation
 
 // MARK: Record classes
 
@@ -124,14 +123,11 @@ class EndRequestRecord: FCGIRecord {
         
         var extraBytes = [UInt8](count: 8, repeatedValue: 0)
         
-        // TODO: This bit twiddling should be abstracted into an extension on
-        // UInt32 that can decompose the bits for either endianness (like the
-        // existing UInt16 category).
-        let bigEndianApplicationStatus = CFSwapInt32HostToBig(applicationStatus)
-        extraBytes[0] = UInt8((bigEndianApplicationStatus >> 0) & 0xFF)
-        extraBytes[1] = UInt8((bigEndianApplicationStatus >> 8) & 0xFF)
-        extraBytes[2] = UInt8((bigEndianApplicationStatus >> 16) & 0xFF)
-        extraBytes[3] = UInt8((bigEndianApplicationStatus >> 24) & 0xFF)
+        let (msb, b1, b2, lsb) = applicationStatus.decomposeBigEndian()
+        extraBytes[0] = msb
+        extraBytes[1] = b1
+        extraBytes[2] = b2
+        extraBytes[3] = lsb
         
         extraBytes[4] = protocolStatus.rawValue
         

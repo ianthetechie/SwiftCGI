@@ -28,7 +28,6 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import Cocoa
 import XCTest
 
 class PrimitiveTests: XCTestCase {
