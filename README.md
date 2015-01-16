@@ -27,22 +27,23 @@ will work well with both relational and non-relational databases) and a few othe
 have as many features as Django.
 
 ## Current status
-I literally wrote this in 3 evenings of spare time. Don't judge too hard yet ;) By the end of January, I hope to
-reach alpha status in that it is a funcitonal base that exhibits proper modular design, is unit tested, etc.
-Right now it's a kludgey port of FCGIKit, which brings me to the credits. (NOTE: As such, the current server
-has the same limitations of FCGIKit).
+This is currently the product of a week's worth of spare time. Don't judge too hard yet ;) By the end of January,
+I hope to reach alpha status in that it is a funcitonal base that exhibits proper modular design, is unit tested, etc.
+While this initially started as a humble and very kludgey port of FCGIKit, it has come a long way in recent weeks.
+Howeve, it's not ready for prime time yet, so expect things to change very rapidly over the next few months.
+(NOTE: The current server has the same limitations of FCGIKit).
 
 ## Credits
-I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of this project is a straight-up port of
+I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of this project started as a port of (and is still heavily influenced by)
 FCGIKit. It has been improved slightly already, and is a lot safer, but it's essentially FCGIKit rewritten in Swift.
 This will of course be improved upon over time, but honestly I 1) don't want to re-invent the wheel, and 2) felt
 it would be a lot safer to have a Swift FCGI server implementation rather than wrapping the FCGI C library *shudder*.
 
 # Getting Started
 1. Clone the repo
-2. Open the SwiftCGIDemo workspace
-3. Admire the elegance of main.swift (it's so short!!!)
-4. Switch the target to SwiftCGIDemo
+2. Open the SwiftCGI Demo workspace
+3. Get ticked at Apple for breaking command-line app integration with third-party Frameworks (currently the demo is a full-blown Cocoa app with a totally useless window lol)
+4. Switch the target to SwiftCGIDemo if necessary
 5. Run the project
 6. Configure nginx to serve fcgi from your application (localhost, port 9000, set up an endpoint, etc. nginx tutorial may come later if I get bored, but it'd probably be faster for you to just google how to set up an nginx fastcgi server)
 
