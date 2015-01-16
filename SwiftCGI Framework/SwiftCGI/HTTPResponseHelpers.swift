@@ -28,32 +28,37 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import Foundation
-
-private let HTTPNewline = "\r\n"
-private let HTTPTerminator = "\r\n\r\n"
-
 public struct HTTPResponse {
     // MARK: Stored Properties
     
-    public let status: HTTPStatus
-    public let contentType: ContentType
-    public var headers: [String: String] = [:]    // TODO use an enumearation for the key
-    public let body: String
+    public var status: HTTPStatus
+    public var contentType: HTTPContentType
+    private var _headers: HTTPHeaderCollection<HTTPResponseHeader> = .Leaf
+    public var headers: HTTPHeaderCollection<HTTPResponseHeader> {
+        // Manually set the content length and content type. The latter is
+        // set as a property at creation time, and the former is computed
+        // dynamically. Both are obviously non-negotiable.
+        var finalHeaders = _headers
+        finalHeaders = setHeader(.ContentType(contentType), finalHeaders)
+        finalHeaders = setHeader(.ContentLength(contentLength), finalHeaders)
+        
+        for header in _headers {
+            finalHeaders = setHeader(header, finalHeaders)
+        }
+        
+        return finalHeaders
+    }
+    public var body: String
     
     
     // MARK: Computed properties
     
     public var contentLength: Int { return countElements(body.utf8) }
     public var headerString: String {
-        // TODO: Clean this up a bit and use a dict with enumerated keys as mentioned above
-        let basicHeaders = [
-            "HTTP/1.1 \(status.rawValue) \(status.description)",
-            "Content-Type: \(contentType.rawValue)",
-            "Content-Length: \(contentLength)"
-        ]
-        let additionalHeaderString = HTTPNewline.join(map(self.headers, { (key, value) in "\(key): \(value)" }))
-        return HTTPNewline.join([HTTPNewline.join(basicHeaders), additionalHeaderString]) + HTTPTerminator
+        let httpStart = "HTTP/1.1 \(status.rawValue) \(status.description)"
+        
+        let httpHeaderString = HTTPNewline.join(map(headers, { header in "\(header.key): \(header.serializedValue)" }))
+        return HTTPNewline.join([httpStart, httpHeaderString]) + HTTPTerminator
     }
     public var responseData: NSData? {
         let responseString = headerString + body as NSString
@@ -63,7 +68,7 @@ public struct HTTPResponse {
     
     // MARK: Init
     
-    public init(status: HTTPStatus, contentType: ContentType, body: String) {
+    public init(status: HTTPStatus, contentType: HTTPContentType, body: String) {
         self.status = status
         self.contentType = contentType
         self.body = body
@@ -75,5 +80,22 @@ public struct HTTPResponse {
         status = .OK
         contentType = .TextHTML
         self.body = body
+    }
+    
+    
+    // MARK: Helpers
+    public mutating func setResponseHeader(header: HTTPResponseHeader) {
+        switch header {
+        case .ContentLength(_):
+            fatalError("Content length cannot be set manually as it is dynamically computed")
+        case .ContentType(let contentType):
+            // If they want to set the content type this way, so be it...
+            self.contentType = contentType
+            return  // IMPORTANT: Early return; no need to set this in the internal collection
+        default:
+            break   // no more special behaviors
+        }
+        
+        _headers = setHeader(header, _headers)
     }
 }

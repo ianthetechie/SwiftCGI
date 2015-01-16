@@ -6,13 +6,12 @@
 //  Copyright (c) 2015 Ian Wagner. All rights reserved.
 //
 
-import Foundation
 import XCTest
 
 class HTTPTests: XCTestCase {
     func testHTTPResponse() {
         let status = HTTPStatus.OK
-        let contentType = ContentType.TextHTML
+        let contentType = HTTPContentType.TextHTML
         let body = "안녕하세요, Swifter!"
         let okResponse = HTTPResponse(body: body)
         
@@ -20,6 +19,7 @@ class HTTPTests: XCTestCase {
         XCTAssertEqual(okResponse.contentType, contentType, "Incorrect default content type")
         XCTAssertEqual(okResponse.contentLength, 25, "Incorrect content length computation")
         XCTAssertEqual(okResponse.body, body, "The request body is inexplicably different than its initial value")
+        let header = okResponse.headerString
         XCTAssertEqual(okResponse.headerString, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 25\r\n\r\n", "The request header is not being properly generated")
         
         let otherOKResponse = HTTPResponse(status: status, contentType: contentType, body: body)

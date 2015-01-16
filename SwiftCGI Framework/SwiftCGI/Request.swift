@@ -28,10 +28,10 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import Foundation
-
 let FCGIRecordHeaderLength: UInt = 8
 let FCGITimeout: NSTimeInterval = 5
+
+let SessionIDCookieName = "sessionid"
 
 public class FCGIRequest {
     let record: BeginRequestRecord
@@ -52,6 +52,8 @@ public class FCGIRequest {
         }
         return nil
     }
+    private var _newSessionID: String?
+    public var sessionID: String? { return _newSessionID ?? cookies?[SessionIDCookieName] }
     
     var socket: GCDAsyncSocket!     // Set externally by the server
     var streamData: NSMutableData?
@@ -107,6 +109,10 @@ public class FCGIRequest {
             NSLog("ERROR: No socket for request")
             return false
         }
+    }
+    
+    public func generateNewSessionID() {
+        _newSessionID = NSUUID().UUIDString
     }
     
     public func getSessionManager<T: SessionManager>() -> RequestSessionManager<T>? {

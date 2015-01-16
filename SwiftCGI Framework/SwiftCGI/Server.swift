@@ -28,8 +28,6 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import Foundation
-
 // NOTE: This class muse inherit from NSObject; otherwise the Obj-C code for
 // GCDAsyncSocket will somehow not be able to store a reference to the delegate
 // (it will remain nil and no error will be logged).
@@ -122,13 +120,9 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                 } else {
                     if var response = requestHandler(request) {
                         // Add the session cookie if necessary
-                        // TODO: Replace this string everywhere in the code with a constant
-                        // TODO: Create a sessionID property on request that
-                        // will generate one automatically if one doesn't exist.
-                        // This will allow the first request that the session
-                        // is created to still write sesison variables.
-                        if request.cookies?["sessionid"] == nil {
-                            response.headers["Set-Cookie"] = "sessionid=\(NSUUID().UUIDString)"
+                        if request.sessionID == nil {
+                            request.generateNewSessionID()
+                            response.setResponseHeader(.SetCookie([SessionIDCookieName: "\(request.sessionID!); Max-Age=86400"]))
                         }
                         
                         if let responseData = response.responseData {
