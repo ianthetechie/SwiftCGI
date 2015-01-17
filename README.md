@@ -35,9 +35,9 @@ Howeve, it's not ready for prime time yet, so expect things to change very rapid
 
 ## Credits
 I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of this project started as a port of (and is still heavily influenced by)
-FCGIKit. It has been improved slightly already, and is a lot safer, but it's essentially FCGIKit rewritten in Swift.
-This will of course be improved upon over time, but honestly I 1) don't want to re-invent the wheel, and 2) felt
-it would be a lot safer to have a Swift FCGI server implementation rather than wrapping the FCGI C library *shudder*.
+FCGIKit. I started off by porting FCGIKit to Swift, and have since rewrittena  lot of things to be more "Swifty." I
+chose this path because I 1) don't want to re-invent the wheel, and 2) felt it would be a lot safer to have a pure
+Swift FCGI server implementation rather than wrapping the FCGI C library *shudder*.
 
 # Getting Started
 1. Clone the repo
