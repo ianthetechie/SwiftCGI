@@ -28,6 +28,19 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
+
+// MARK: Request/response lifecycle processing hooks
+//
+// Preware: invoked BEFORE the response is generated (returns an FCGIRequest that may or may not be modified)
+// Middleware:
+
+public typealias RequestPrewareHandler = FCGIRequest -> FCGIRequest
+public typealias RequestMiddlewareHandler = (FCGIRequest, HTTPResponse) -> HTTPResponse
+public typealias RequestPostwareHandler = (FCGIRequest, HTTPResponse?) -> Void
+
+
+// MARK: Main server class
+
 // NOTE: This class muse inherit from NSObject; otherwise the Obj-C code for
 // GCDAsyncSocket will somehow not be able to store a reference to the delegate
 // (it will remain nil and no error will be logged).
@@ -46,6 +59,9 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     
     private var currentRequests: [String: FCGIRequest] = [:]
     
+    private var registeredPreware: [RequestPrewareHandler] = []
+    private var registeredMiddleware: [RequestMiddlewareHandler] = []
+    private var registeredPostware: [RequestPostwareHandler] = []
     
     // MARK: Init
     
@@ -110,7 +126,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
             let maybeRequest = currentRequests[globalRequestID]
             objc_sync_exit(currentRequests)
             
-            if let request = maybeRequest {
+            if var request = maybeRequest {
                 if request.streamData == nil {
                     request.streamData = NSMutableData(capacity: 65536)
                 }
@@ -118,19 +134,31 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                 if let recordData = (record as ByteStreamRecord).rawData {
                     request.streamData!.appendData(recordData)
                 } else {
+                    for handler in registeredPreware {
+                        request = handler(request)
+                    }
+                    
                     if var response = requestHandler(request) {
-                        // Add the session cookie if necessary
-                        if request.sessionID == nil {
-                            request.generateNewSessionID()
-                            response.setResponseHeader(.SetCookie([SessionIDCookieName: "\(request.sessionID!); Max-Age=86400"]))
+                        for handler in registeredMiddleware {
+                            response = handler(request, response)
                         }
                         
                         if let responseData = response.responseData {
                             request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
                         }
+                        
+                        request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
+                        
+                        for handler in registeredPostware {
+                            handler(request, response)
+                        }
+                    } else {
+                        request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
+                        
+                        for handler in registeredPostware {
+                            handler(request, nil)
+                        }
                     }
-                    
-                    request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
                     
                     recordContext[request.socket] = nil
                     objc_sync_enter(currentRequests)
@@ -143,6 +171,21 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
         default:
             fatalError("ERROR: handleRecord called with an invalid FCGIRecord type")
         }
+    }
+    
+    
+    // MARK: Pre/middle/postware registration
+    
+    public func registerPrewareHandler(handler: RequestPrewareHandler) -> Void {
+        registeredPreware.append(handler)
+    }
+    
+    public func registerMiddlewareHandler(handler: RequestMiddlewareHandler) -> Void {
+        registeredMiddleware.append(handler)
+    }
+    
+    public func registerPostwareHandler(handler: RequestPostwareHandler) -> Void {
+        registeredPostware.append(handler)
     }
     
     
@@ -190,26 +233,5 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
             NSLog("ERROR: Unknown socket tag")
             sock.disconnect()
         }
-    }
-}
-
-// Convenience funciton, since you really shouldn't have to manually construct
-// a server instance and crap.
-// NOTE: This was designed for a command-line app, but at the time of this
-// writing, command-line apps + frameworks = a bomb. So... yeah... waiting
-// for Apple to fix that.
-public func runServerUntilKilled(port: UInt16 = 9000, #requestHandler: FCGIRequestHandler) {
-    let server = FCGIServer(port: port, requestHandler: requestHandler)
-    
-    var err: NSError?
-    server.startWithError(&err)
-    
-    if let error = err {
-        println("Failed to start SwiftCGI server")
-        println(err)
-        exit(1)
-    } else {
-        println("Started SwiftCGI server on port \(server.port)")
-        dispatch_main()
     }
 }

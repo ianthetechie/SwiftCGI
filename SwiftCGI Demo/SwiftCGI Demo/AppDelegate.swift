@@ -29,6 +29,7 @@
 
 import Cocoa
 import SwiftCGI
+import SwiftCGISessions
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -56,6 +57,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         server = FCGIServer(port: 9000, requestHandler: requestHandler)
+        
+        // Set up middleware
+        server.registerMiddlewareHandler(sessionMiddlewareHandler)
         
         var err: NSError?
         server.startWithError(&err)

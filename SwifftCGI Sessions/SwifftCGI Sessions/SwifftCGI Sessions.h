@@ -1,6 +1,6 @@
 //
-//  HTTPTests.swift
-//  SwiftCGI
+//  SwifftCGI Sessions.h
+//  SwifftCGI Sessions
 //
 //  Copyright (c) 2014, Ian Wagner
 //  All rights reserved.
@@ -28,25 +28,14 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import XCTest
+#import <Cocoa/Cocoa.h>
 
-class HTTPTests: XCTestCase {
-    func testHTTPResponse() {
-        let status = HTTPStatus.OK
-        let contentType = HTTPContentType.TextHTML
-        let body = "안녕하세요, Swifter!"
-        let okResponse = HTTPResponse(body: body)
-        
-        XCTAssertEqual(okResponse.status, status, "Incorrect default HTTPStatus")
-        XCTAssertEqual(okResponse.contentType, contentType, "Incorrect default content type")
-        XCTAssertEqual(okResponse.contentLength, 25, "Incorrect content length computation")
-        XCTAssertEqual(okResponse.body, body, "The request body is inexplicably different than its initial value")
-        let header = okResponse.headerString
-        XCTAssertEqual(okResponse.headerString, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 25\r\n\r\n", "The request header is not being properly generated")
-        
-        let otherOKResponse = HTTPResponse(status: status, contentType: contentType, body: body)
-        XCTAssertEqual(okResponse.status, otherOKResponse.status, "Incorrect default HTTPStatus")
-        XCTAssertEqual(okResponse.contentType, otherOKResponse.contentType, "Incorrect default content type")
-        XCTAssertEqual(okResponse.body, otherOKResponse.body, "The request body is inexplicably different than its initial value")
-    }
-}
+//! Project version number for SwifftCGI Sessions.
+FOUNDATION_EXPORT double SwifftCGI_SessionsVersionNumber;
+
+//! Project version string for SwifftCGI Sessions.
+FOUNDATION_EXPORT const unsigned char SwifftCGI_SessionsVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <SwifftCGI_Sessions/PublicHeader.h>
+
+

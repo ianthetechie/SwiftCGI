@@ -31,8 +31,7 @@
 let FCGIRecordHeaderLength: UInt = 8
 let FCGITimeout: NSTimeInterval = 5
 
-let SessionIDCookieName = "sessionid"
-
+// TODO: this should probably be a struct...
 public class FCGIRequest {
     let record: BeginRequestRecord
     let keepConnection: Bool
@@ -40,20 +39,26 @@ public class FCGIRequest {
     var _params: FCGIRequestParams!  // Set externally and never reset to nil thereafter
     public var params: FCGIRequestParams { return _params } // Accessor for code outside the framework
     
+    private var _cookies: [String: String]?
     public var cookies: [String: String]? {
-        if let cookieString = params["HTTP_COOKIE"] {
-            var result: [String: String] = [:]
-            let cookieDefinitions = cookieString.componentsSeparatedByString("; ")
-            for cookie in cookieDefinitions {
-                let cookieDef = cookie.componentsSeparatedByString("=")
-                result[cookieDef[0]] = cookieDef[1]
+        get {
+            if _cookies == nil {
+                if let cookieString = params["HTTP_COOKIE"] {
+                    var result: [String: String] = [:]
+                    let cookieDefinitions = cookieString.componentsSeparatedByString("; ")
+                    for cookie in cookieDefinitions {
+                        let cookieDef = cookie.componentsSeparatedByString("=")
+                        result[cookieDef[0]] = cookieDef[1]
+                    }
+                    _cookies = result
+                }
             }
-            return result
+            return _cookies
         }
-        return nil
+        set {
+            _cookies = newValue
+        }
     }
-    private var _newSessionID: String?
-    public var sessionID: String? { return _newSessionID ?? cookies?[SessionIDCookieName] }
     
     var socket: GCDAsyncSocket!     // Set externally by the server
     var streamData: NSMutableData?
@@ -63,7 +68,7 @@ public class FCGIRequest {
         keepConnection = record.flags & FCGIRequestFlags.KeepConnection ? true : false
     }
     
-    public func writeData(data: NSData, toStream stream: FCGIOutputStream) -> Bool {
+    func writeData(data: NSData, toStream stream: FCGIOutputStream) -> Bool {
         if socket != nil {
             if let streamType = FCGIRecordType(rawValue: stream.rawValue) {
                 var remainingData = data.mutableCopy() as NSMutableData
@@ -93,7 +98,7 @@ public class FCGIRequest {
         return false
     }
     
-    public func finishWithProtocolStatus(protocolStatus: FCGIProtocolStatus, andApplicationStatus applicationStatus: FCGIApplicationStatus) -> Bool {
+    func finishWithProtocolStatus(protocolStatus: FCGIProtocolStatus, andApplicationStatus applicationStatus: FCGIApplicationStatus) -> Bool {
         if socket != nil {
             let outRecord = EndRequestRecord(version: record.version, requestID: record.requestID, paddingLength: 0, protocolStatus: protocolStatus, applicationStatus: applicationStatus)
             socket.writeData(outRecord.fcgiPacketData, withTimeout: 5, tag: 0)
@@ -109,13 +114,5 @@ public class FCGIRequest {
             NSLog("ERROR: No socket for request")
             return false
         }
-    }
-    
-    public func generateNewSessionID() {
-        _newSessionID = NSUUID().UUIDString
-    }
-    
-    public func getSessionManager<T: SessionManager>() -> RequestSessionManager<T>? {
-        return RequestSessionManager<T>(request: self)
     }
 }

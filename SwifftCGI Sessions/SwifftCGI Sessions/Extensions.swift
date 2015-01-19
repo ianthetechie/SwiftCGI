@@ -1,6 +1,6 @@
 //
-//  HTTPTests.swift
-//  SwiftCGI
+//  Extensions.swift
+//  SwifftCGI Sessions
 //
 //  Copyright (c) 2014, Ian Wagner
 //  All rights reserved.
@@ -28,25 +28,39 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import XCTest
+import Foundation
+import SwiftCGI
 
-class HTTPTests: XCTestCase {
-    func testHTTPResponse() {
-        let status = HTTPStatus.OK
-        let contentType = HTTPContentType.TextHTML
-        let body = "안녕하세요, Swifter!"
-        let okResponse = HTTPResponse(body: body)
-        
-        XCTAssertEqual(okResponse.status, status, "Incorrect default HTTPStatus")
-        XCTAssertEqual(okResponse.contentType, contentType, "Incorrect default content type")
-        XCTAssertEqual(okResponse.contentLength, 25, "Incorrect content length computation")
-        XCTAssertEqual(okResponse.body, body, "The request body is inexplicably different than its initial value")
-        let header = okResponse.headerString
-        XCTAssertEqual(okResponse.headerString, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 25\r\n\r\n", "The request header is not being properly generated")
-        
-        let otherOKResponse = HTTPResponse(status: status, contentType: contentType, body: body)
-        XCTAssertEqual(okResponse.status, otherOKResponse.status, "Incorrect default HTTPStatus")
-        XCTAssertEqual(okResponse.contentType, otherOKResponse.contentType, "Incorrect default content type")
-        XCTAssertEqual(okResponse.body, otherOKResponse.body, "The request body is inexplicably different than its initial value")
+
+let SessionIDCookieName = "sessionid"
+
+// Extension to implement session handling properties on FCGIRequest
+public extension FCGIRequest {
+    public var sessionID: String? { return cookies?[SessionIDCookieName] }
+    
+    public func generateSessionID() {
+        if sessionID == nil {
+            var newCookies = cookies ?? [:]
+            newCookies[SessionIDCookieName] = NSUUID().UUIDString
+            self.cookies = newCookies
+        } else {
+            fatalError("Attempted to generate a session ID for a request that already has a session ID")
+        }
     }
+    
+    public func getSessionManager<T: SessionManager>() -> RequestSessionManager<T>? {
+        return RequestSessionManager<T>(request: self)
+    }
+}
+
+
+// Define a handler function to modify the response accordingly
+public func sessionMiddlewareHandler(request: FCGIRequest, var response: HTTPResponse) -> HTTPResponse {
+    // Add the session cookie if necessary
+    if request.sessionID == nil {
+        request.generateSessionID()
+        response.setResponseHeader(.SetCookie([SessionIDCookieName: "\(request.sessionID!); Max-Age=86400"]))
+    }
+    
+    return response
 }

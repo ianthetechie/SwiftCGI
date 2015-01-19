@@ -13,6 +13,7 @@
 		CE9B20831A68E433003DD00E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE9B20811A68E433003DD00E /* Main.storyboard */; };
 		CE9B208F1A68E433003DD00E /* SwiftCGI_DemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9B208E1A68E433003DD00E /* SwiftCGI_DemoTests.swift */; };
 		CE9B20991A68E4B4003DD00E /* SwiftCGI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE9B20981A68E4B4003DD00E /* SwiftCGI.framework */; };
+		CEC3E5F91A6C9D890008E72A /* SwiftCGISessions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC3E5F81A6C9D890008E72A /* SwiftCGISessions.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		CE9B208D1A68E433003DD00E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE9B208E1A68E433003DD00E /* SwiftCGI_DemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftCGI_DemoTests.swift; sourceTree = "<group>"; };
 		CE9B20981A68E4B4003DD00E /* SwiftCGI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftCGI.framework; path = "../../Library/Developer/Xcode/DerivedData/SwiftCGI_Demo-hiiihgbpvrbisofcqiphmuzttjff/Build/Products/Debug/SwiftCGI.framework"; sourceTree = "<group>"; };
+		CEC3E5F81A6C9D890008E72A /* SwiftCGISessions.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftCGISessions.framework; path = "../../Library/Developer/Xcode/DerivedData/SwiftCGI_Demo-hiiihgbpvrbisofcqiphmuzttjff/Build/Products/Debug/SwiftCGISessions.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +46,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE9B20991A68E4B4003DD00E /* SwiftCGI.framework in Frameworks */,
+				CEC3E5F91A6C9D890008E72A /* SwiftCGISessions.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +63,7 @@
 		CE9B206D1A68E433003DD00E = {
 			isa = PBXGroup;
 			children = (
+				CEC3E5F81A6C9D890008E72A /* SwiftCGISessions.framework */,
 				CE9B20981A68E4B4003DD00E /* SwiftCGI.framework */,
 				CE9B20781A68E433003DD00E /* SwiftCGI Demo */,
 				CE9B208B1A68E433003DD00E /* SwiftCGI DemoTests */,
