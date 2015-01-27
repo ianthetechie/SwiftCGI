@@ -34,6 +34,9 @@ import SwiftCGISessions
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     
+    // UI junk. Because Cocoa app...
+    let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(-1) // workaround for a linker bug that prevents use of the proper constants
+    
     var server: FCGIServer!
     
     func applicationDidFinishLaunching(aNotification: NSNotification) {
@@ -71,12 +74,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             println("Started SwiftCGI server on port \(server.port)")
         }
+        
+        // Set ourselves up in the status bar (top of the screen)
+        statusItem.title = "SwiftCGI"   // TODO: Use a logo
+        
+        let menu = NSMenu()
+        menu.addItemWithTitle("Kill Server", action: Selector("killServer:"), keyEquivalent: "")
+        
+        statusItem.menu = menu
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
     }
 
-
+    func killServer(sender: AnyObject!) {
+        NSApplication.sharedApplication().terminate(sender)
+    }
+    
 }
 

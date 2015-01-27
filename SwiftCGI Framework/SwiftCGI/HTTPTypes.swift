@@ -97,6 +97,9 @@ public class HTTPHeaderGenerator<T: HTTPHeader>: GeneratorType {
 }
 
 
+// TODO: This should probably be adjusted to be a red-black tree to maintain
+// efficiency with large collections constructed in sorted order (which, I
+// am guessing will be quite common...)
 public enum HTTPHeaderCollection<T: HTTPHeader>: SequenceType, Equatable {
     case Leaf
     case Node(Box<HTTPHeaderCollection<T>>, Box<T>, Box<HTTPHeaderCollection<T>>)
