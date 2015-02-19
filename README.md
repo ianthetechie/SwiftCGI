@@ -45,7 +45,18 @@ Swift FCGI server implementation rather than wrapping the FCGI C library *shudde
 3. Get ticked at Apple for breaking command-line app integration with third-party Frameworks (currently the demo is a full-blown Cocoa app with a totally useless window lol)
 4. Switch the target to SwiftCGIDemo if necessary
 5. Run the project
-6. Configure nginx to serve fcgi from your application (localhost, port 9000, set up an endpoint, etc. nginx tutorial may come later if I get bored, but it'd probably be faster for you to just google how to set up an nginx fastcgi server)
+6. Configure nginx to serve fcgi from your application (a full nginx
+   tutorial may come later if I get bored, but for now, the following
+   nginx.conf snippet should suffice... Put this inside your server block)
+
+```
+location /cgi {
+    fastcgi_pass    localhost:9000;
+    fastcgi_param   SCRIPT_FILENAME /scripts$fastcgi_script_name;
+    include         fastcgi_params;
+}
+```
+
 
 ## License This project is distributed under the terms of the 2-clause
 BSD license. TL;DR - if the use of this product causes the death of
