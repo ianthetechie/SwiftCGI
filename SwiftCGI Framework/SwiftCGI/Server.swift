@@ -134,6 +134,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                 if let recordData = (record as ByteStreamRecord).rawData {
                     request.streamData!.appendData(recordData)
                 } else {
+                    // TODO: Future - when Swift gets exception handling, wrap this
                     for handler in registeredPreware {
                         request = handler(request)
                     }
