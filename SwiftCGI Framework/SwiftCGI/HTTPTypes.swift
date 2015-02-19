@@ -252,7 +252,7 @@ public enum HTTPResponseHeader: HTTPHeader {
     public var serializedValue: String {
         switch self {
         case .ContentLength(let length): return length.description
-        case .ContentType(let contentType): return contentType.rawValue
+        case .ContentType(let contentType): return "\(contentType.rawValue); charset=utf-8" // TODO: FUTURE - would we ever want to allow another content type? If so, how? All data is converted to UTF-8 in the current architecture, so it makes sense to hardcode it right now.
         case .SetCookie(let cookies): return "\(HTTPNewline)\(self.key): ".join(map(cookies, { (key, value) in "\(key)=\(value)" }))
         }
     }
