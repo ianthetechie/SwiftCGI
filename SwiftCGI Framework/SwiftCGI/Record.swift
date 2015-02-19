@@ -189,22 +189,13 @@ class ParamsRecord: FCGIRecord {
         //Remove Padding
         let unpaddedData = data.subdataWithRange(NSMakeRange(0, Int(contentLength))).mutableCopy() as NSMutableData
         while unpaddedData.length > 0 {
-            var pos0 = 0
-            var pos1 = 0
-            var pos4 = 0
+            var pos0 = 0, pos1 = 0, pos4 = 0
             
-            var keyLengthB3 = 0
-            var keyLengthB2 = 0
-            var keyLengthB1 = 0
-            var keyLengthB0 = 0
+            var keyLengthB3 = 0, keyLengthB2 = 0, keyLengthB1 = 0, keyLengthB0 = 0
             
-            var valueLengthB3 = 0
-            var valueLengthB2 = 0
-            var valueLengthB1 = 0
-            var valueLengthB0 = 0
+            var valueLengthB3 = 0, valueLengthB2 = 0, valueLengthB1 = 0, valueLengthB0 = 0
             
-            var keyLength = 0
-            var valueLength = 0
+            var keyLength = 0, valueLength = 0
             
             unpaddedData.getBytes(&pos0, range: NSMakeRange(0, 1))
             unpaddedData.getBytes(&pos1, range: NSMakeRange(1, 1))
