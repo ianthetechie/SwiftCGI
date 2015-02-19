@@ -199,8 +199,12 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
         newSocket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
     }
     
-    public func socketDidDisconnect(sock: GCDAsyncSocket!, withError err: NSError!) {
-        recordContext[sock] = nil
+    public func socketDidDisconnect(sock: GCDAsyncSocket?, withError err: NSError!) {
+        if sock != nil {
+            recordContext[sock!] = nil
+        } else {
+            NSLog("WARNING: nil sock disconnect")
+        }
     }
     
     public func socket(sock: GCDAsyncSocket!, didReadData data: NSData!, withTag tag: Int) {
