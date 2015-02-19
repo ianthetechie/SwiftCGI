@@ -142,7 +142,6 @@ class RecordTests: XCTestCase {
         }
     }
     
-    // TODO: Test with a LOT of params (like... >64k bytes... not a big priority)
     func testParamsRecord() {
         // NOTE: The following test data was derived from an NSData dump gathered using the lldb console.
         // The NSData output was something like 0f0c5343 52495054 5f46494c ...
