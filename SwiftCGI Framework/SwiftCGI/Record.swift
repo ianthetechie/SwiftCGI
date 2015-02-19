@@ -46,6 +46,9 @@ class FCGIRecord {
     // of record subclasses are used for incoming data (in which the content length
     // is known at instantiation), and others compute content length before
     // sending a packet.
+    //
+    // NOTE: The total data length = contentLenth + paddingLength. Padding
+    // is extra data that is ignored.
     let _initContentLength: FCGIContentLength!
     var contentLength: FCGIContentLength { return _initContentLength }
     

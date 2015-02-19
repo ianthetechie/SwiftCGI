@@ -142,7 +142,56 @@ class RecordTests: XCTestCase {
         }
     }
     
-    // TODO: ParamsRecord
+    // TODO: Test with a LOT of params (like... >64k bytes... not a big priority)
+    func testParamsRecord() {
+        // NOTE: The following test data was derived from an NSData dump gathered using the lldb console.
+        // The NSData output was something like 0f0c5343 52495054 5f46494c ...
+        // The following Python code was used to convert this into base64, for
+        // easy ingestion as NSData for testing purposes here. Also, make sure
+        // you check the padding and content length (technically only the content
+        // length matters, but yeah...).
+        //
+        // import struct
+        // import base64
+        //
+        // data_string = '0f0c5343 52495054 5f46494c ...' // replace with actual data
+        // words = data_string.split()
+        // data_string = struct.pack('!%s' % ('I' * len(words)), *[int(x, 16) for x in words])  // pack the parsed chunks into a string
+        // print base64.b64decode(data_string)
+        let data = NSData(base64EncodedString: "DwxTQ1JJUFRfRklMRU5BTUUvc2NyaXB0cy9jZ2kMAFFVRVJZX1NUUklORw4DUkVRVUVTVF9NRVRIT0RHRVQMAENPTlRFTlRfVFlQRQ4AQ09OVEVOVF9MRU5HVEgLBFNDUklQVF9OQU1FL2NnaQsEUkVRVUVTVF9VUkkvY2dpDARET0NVTUVOVF9VUkkvY2dpDSJET0NVTUVOVF9ST09UL3Vzci9sb2NhbC9DZWxsYXIvbmdpbngvMS42LjIvaHRtbA8IU0VSVkVSX1BST1RPQ09MSFRUUC8xLjERB0dBVEVXQVlfSU5URVJGQUNFQ0dJLzEuMQ8LU0VSVkVSX1NPRlRXQVJFbmdpbngvMS42LjILCVJFTU9URV9BRERSMTI3LjAuMC4xCwVSRU1PVEVfUE9SVDU3MTk4CwlTRVJWRVJfQUREUjEyNy4wLjAuMQsEU0VSVkVSX1BPUlQ4MDgwCwlTRVJWRVJfTkFNRWxvY2FsaG9zdA8DUkVESVJFQ1RfU1RBVFVTMjAwCQ5IVFRQX0hPU1Rsb2NhbGhvc3Q6ODA4MAsISFRUUF9QUkFHTUFuby1jYWNoZQsuSFRUUF9DT09LSUVzZXNzaW9uaWQ9ODQwNUY4NUUtOTQ5Ni00NUEwLUE3MjQtREI5RDkzMDEwN0Q0DwpIVFRQX0NPTk5FQ1RJT05rZWVwLWFsaXZlCz9IVFRQX0FDQ0VQVHRleHQvaHRtbCxhcHBsaWNhdGlvbi94aHRtbCt4bWwsYXBwbGljYXRpb24veG1sO3E9MC45LCovKjtxPTAuOA92SFRUUF9VU0VSX0FHRU5UTW96aWxsYS81LjAgKE1hY2ludG9zaDsgSW50ZWwgTWFjIE9TIFggMTBfMTBfMikgQXBwbGVXZWJLaXQvNjAwLjMuMTggKEtIVE1MLCBsaWtlIEdlY2tvKSBWZXJzaW9uLzguMC4zIFNhZmFyaS82MDAuMy4xOBQFSFRUUF9BQ0NFUFRfTEFOR1VBR0Vlbi11cxQNSFRUUF9BQ0NFUFRfRU5DT0RJTkdnemlwLCBkZWZsYXRlEglIVFRQX0NBQ0hFX0NPTlRST0xtYXgtYWdlPTAAAAAAAA==", options: .allZeros)!
+        let paddingLength = 5
+        let record = ParamsRecord(version: .Version1, requestID: 1, contentLength: 832 - paddingLength, paddingLength: FCGIPaddingLength(paddingLength))
+        record.processContentData(data)
+        
+        let expectedResult = ["SERVER_ADDR": "127.0.0.1",
+            "HTTP_USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.18 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.18",
+            "HTTP_CACHE_CONTROL": "max-age=0",
+            "REMOTE_ADDR": "127.0.0.1",
+            "HTTP_ACCEPT_LANGUAGE": "en-us",
+            "DOCUMENT_URI": "/cgi",
+            "GATEWAY_INTERFACE": "CGI/1.1",
+            "HTTP_COOKIE": "sessionid=8405F85E-9496-45A0-A724-DB9D930107D4",
+            "HTTP_ACCEPT": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "SCRIPT_NAME": "/cgi",
+            "HTTP_HOST": "localhost:8080",
+            "REQUEST_METHOD": "GET",
+            "SERVER_PROTOCOL": "HTTP/1.1",
+            "SERVER_NAME": "localhost",
+            "HTTP_PRAGMA": "no-cache",
+            "SCRIPT_FILENAME": "/scripts/cgi",
+            "CONTENT_TYPE": "",
+            "CONTENT_LENGTH": "",
+            "REQUEST_URI": "/cgi",
+            "DOCUMENT_ROOT": "/usr/local/Cellar/nginx/1.6.2/html",
+            "SERVER_SOFTWARE": "nginx/1.6.2",
+            "SERVER_PORT": "8080",
+            "HTTP_CONNECTION": "keep-alive",
+            "REMOTE_PORT": "57198",
+            "HTTP_ACCEPT_ENCODING": "gzip, deflate",
+            "QUERY_STRING": "",
+            "REDIRECT_STATUS": "200"]
+        XCTAssert(record.params != nil && expectedResult == record.params!, "Incorrect params record parsing result")
+    }
     
     // TODO: createRecordFromHeaderData
 }

@@ -42,7 +42,7 @@ class HTTPTests: XCTestCase {
         XCTAssertEqual(okResponse.contentLength, 25, "Incorrect content length computation")
         XCTAssertEqual(okResponse.body, body, "The request body is inexplicably different than its initial value")
         let header = okResponse.headerString
-        XCTAssertEqual(okResponse.headerString, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 25\r\n\r\n", "The request header is not being properly generated")
+        XCTAssertEqual(okResponse.headerString, "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: 25\r\n\r\n", "The request header is not being properly generated")
         
         let otherOKResponse = HTTPResponse(status: status, contentType: contentType, body: body)
         XCTAssertEqual(okResponse.status, otherOKResponse.status, "Incorrect default HTTPStatus")
