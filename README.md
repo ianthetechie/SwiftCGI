@@ -27,17 +27,17 @@ will work well with both relational and non-relational databases) and a few othe
 have as many features as Django.
 
 ## Current status
-This is currently the product of a week's worth of spare time. Don't judge too hard yet ;) By the end of January,
-I hope to reach alpha status in that it is a funcitonal base that exhibits proper modular design, is unit tested, etc.
-While this initially started as a humble and very kludgey port of FCGIKit, it has come a long way in recent weeks.
-Howeve, it's not ready for prime time yet, so expect things to change very rapidly over the next few months.
-(NOTE: The current server has the same limitations of FCGIKit).
+I would currently classify SwiftCGI as alpha status in that it is a funcitonal base that exhibits proper modular
+design, is (mostly) unit tested, but is still rather incomplete. It is not ready for prime time yet, so expect
+things to change very rapidly over the next few months. (NOTE: The current server has the same limitations of
+FCGIKit, which will be remedied in the future).
 
 ## Credits
-I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of this project started as a port of (and is still heavily influenced by)
-FCGIKit. I started off by porting FCGIKit to Swift, and have since rewrittena  lot of things to be more "Swifty." I
-chose this path because I 1) don't want to re-invent the wheel, and 2) felt it would be a lot safer to have a pure
-Swift FCGI server implementation rather than wrapping the FCGI C library *shudder*.
+I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of this
+project started as a port of (and is still heavily influenced by) FCGIKit. I started off by porting FCGIKit to Swift,
+and have since rewrittena  lot of things to be more "Swifty." I chose this path because I 1) don't want to re-invent
+the wheel, and 2) felt it would be a lot safer to have a pure Swift FCGI server implementation rather than wrapping
+the FCGI C library *shudder*.
 
 # Getting Started
 1. Clone the repo
