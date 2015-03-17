@@ -13,6 +13,8 @@
 		CE9B208F1A68E433003DD00E /* SwiftCGI_DemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9B208E1A68E433003DD00E /* SwiftCGI_DemoTests.swift */; };
 		CE9B20991A68E4B4003DD00E /* SwiftCGI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE9B20981A68E4B4003DD00E /* SwiftCGI.framework */; };
 		CEC3E5F91A6C9D890008E72A /* SwiftCGISessions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC3E5F81A6C9D890008E72A /* SwiftCGISessions.framework */; };
+		E99E538E1AB7B06100810B12 /* Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E538D1AB7B06100810B12 /* Root.swift */; };
+		E99E53911AB7B2EC00810B12 /* Blog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E53901AB7B2EC00810B12 /* Blog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +38,8 @@
 		CE9B208E1A68E433003DD00E /* SwiftCGI_DemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftCGI_DemoTests.swift; sourceTree = "<group>"; };
 		CE9B20981A68E4B4003DD00E /* SwiftCGI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftCGI.framework; path = "../../Library/Developer/Xcode/DerivedData/SwiftCGI_Demo-hiiihgbpvrbisofcqiphmuzttjff/Build/Products/Debug/SwiftCGI.framework"; sourceTree = "<group>"; };
 		CEC3E5F81A6C9D890008E72A /* SwiftCGISessions.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftCGISessions.framework; path = "../../Library/Developer/Xcode/DerivedData/SwiftCGI_Demo-hiiihgbpvrbisofcqiphmuzttjff/Build/Products/Debug/SwiftCGISessions.framework"; sourceTree = "<group>"; };
+		E99E538D1AB7B06100810B12 /* Root.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Root.swift; sourceTree = "<group>"; };
+		E99E53901AB7B2EC00810B12 /* Blog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +88,7 @@
 				CE9B207B1A68E433003DD00E /* AppDelegate.swift */,
 				CE9B207F1A68E433003DD00E /* Images.xcassets */,
 				CE9B20811A68E433003DD00E /* Main.storyboard */,
+				E99E538C1AB7B04900810B12 /* Handlers */,
 				CE9B20791A68E433003DD00E /* Supporting Files */,
 			);
 			path = "SwiftCGI Demo";
@@ -112,6 +117,15 @@
 				CE9B208D1A68E433003DD00E /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E99E538C1AB7B04900810B12 /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				E99E538D1AB7B06100810B12 /* Root.swift */,
+				E99E53901AB7B2EC00810B12 /* Blog.swift */,
+			);
+			name = Handlers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -213,6 +227,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E99E53911AB7B2EC00810B12 /* Blog.swift in Sources */,
+				E99E538E1AB7B06100810B12 /* Root.swift in Sources */,
 				CE9B207C1A68E433003DD00E /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -29,16 +29,6 @@
 //
 
 
-// MARK: Request/response lifecycle processing hooks
-//
-// Preware: invoked BEFORE the response is generated (returns an FCGIRequest that may or may not be modified)
-// Middleware:
-
-public typealias RequestPrewareHandler = FCGIRequest -> FCGIRequest
-public typealias RequestMiddlewareHandler = (FCGIRequest, HTTPResponse) -> HTTPResponse
-public typealias RequestPostwareHandler = (FCGIRequest, HTTPResponse?) -> Void
-
-
 // MARK: Main server class
 
 // NOTE: This class muse inherit from NSObject; otherwise the Obj-C code for
@@ -49,7 +39,8 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     
     public let port: UInt16
     public var paramsAvailableHandler: (FCGIRequest -> Void)?
-    public var requestHandler: FCGIRequestHandler
+    public var requestRouter: Router
+//    public var requestHandler: FCGIRequestHandler
     
     let delegateQueue: dispatch_queue_t
     var recordContext: [GCDAsyncSocket: FCGIRecord] = [:]
@@ -65,9 +56,9 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     
     // MARK: Init
     
-    public init(port: UInt16, requestHandler: FCGIRequestHandler) {
+    public init(port: UInt16, requestRouter: Router) {
         self.port = port
-        self.requestHandler = requestHandler
+        self.requestRouter = requestRouter
         
         delegateQueue = dispatch_queue_create("SocketAcceptQueue", DISPATCH_QUEUE_SERIAL)
     }
@@ -139,25 +130,29 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                         request = handler(request)
                     }
                     
-                    if var response = requestHandler(request) {
-                        for handler in registeredMiddleware {
-                            response = handler(request, response)
-                        }
-                        
-                        if let responseData = response.responseData {
-                            request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
-                        }
-                        
-                        request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
-                        
-                        for handler in registeredPostware {
-                            handler(request, response)
-                        }
-                    } else {
-                        request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
-                        
-                        for handler in registeredPostware {
-                            handler(request, nil)
+                    if let path = request.params["REQUEST_URI"] {
+                        if let requestHandler = requestRouter.route(path) {
+                            if var response = requestHandler(request) {
+                                for handler in registeredMiddleware {
+                                    response = handler(request, response)
+                                }
+                                
+                                if let responseData = response.responseData {
+                                    request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
+                                }
+                                
+                                request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
+                                
+                                for handler in registeredPostware {
+                                    handler(request, response)
+                                }
+                            } else {
+                                request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
+                                
+                                for handler in registeredPostware {
+                                    handler(request, nil)
+                                }
+                            }
                         }
                     }
                     

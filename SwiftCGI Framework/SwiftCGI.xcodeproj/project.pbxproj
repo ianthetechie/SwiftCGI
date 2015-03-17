@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		CE052E3A1A5CBAAB00F8DA34 /* UIntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E391A5CBAAB00F8DA34 /* UIntExtensions.swift */; };
 		CE052E3B1A5CBE1B00F8DA34 /* UIntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E391A5CBAAB00F8DA34 /* UIntExtensions.swift */; };
-		CE052E3C1A5CC17100F8DA34 /* FCGITypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* FCGITypes.swift */; };
+		CE052E3C1A5CC17100F8DA34 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* Types.swift */; };
 		CE052E3D1A5CC17700F8DA34 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD741A5A256E0014D017 /* Record.swift */; };
 		CE052E3E1A5CC28C00F8DA34 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD771A5A57DC0014D017 /* Request.swift */; };
 		CE052E401A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */; };
@@ -24,11 +24,13 @@
 		CEEBFD311A5A1D420014D017 /* SwiftCGI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBFD301A5A1D420014D017 /* SwiftCGI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEEBFD371A5A1D430014D017 /* SwiftCGI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEEBFD2B1A5A1D420014D017 /* SwiftCGI.framework */; };
 		CEEBFD3E1A5A1D430014D017 /* PrimitiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD3D1A5A1D430014D017 /* PrimitiveTests.swift */; };
-		CEEBFD721A5A20590014D017 /* FCGITypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* FCGITypes.swift */; };
+		CEEBFD721A5A20590014D017 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* Types.swift */; };
 		CEEBFD751A5A256E0014D017 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD741A5A256E0014D017 /* Record.swift */; };
 		CEEBFD781A5A57DC0014D017 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD771A5A57DC0014D017 /* Request.swift */; };
 		CEEBFD881A5A591F0014D017 /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBFD861A5A591F0014D017 /* GCDAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */; };
+		E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
+		E99E5FE01AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,12 +57,13 @@
 		CEEBFD361A5A1D430014D017 /* SwiftCGITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftCGITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEEBFD3C1A5A1D430014D017 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CEEBFD3D1A5A1D430014D017 /* PrimitiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimitiveTests.swift; sourceTree = "<group>"; };
-		CEEBFD711A5A20590014D017 /* FCGITypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FCGITypes.swift; sourceTree = "<group>"; };
+		CEEBFD711A5A20590014D017 /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		CEEBFD741A5A256E0014D017 /* Record.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		CEEBFD771A5A57DC0014D017 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		CEEBFD7B1A5A58BF0014D017 /* SwiftCGITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftCGITests-Bridging-Header.h"; sourceTree = "<group>"; };
 		CEEBFD861A5A591F0014D017 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
 		CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
+		E99E5FDE1AA2D8B600BED31D /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,13 +110,14 @@
 				CEEBFD301A5A1D420014D017 /* SwiftCGI.h */,
 				CEEBFD2E1A5A1D420014D017 /* Supporting Files */,
 				CE052E391A5CBAAB00F8DA34 /* UIntExtensions.swift */,
-				CEEBFD711A5A20590014D017 /* FCGITypes.swift */,
+				CEEBFD711A5A20590014D017 /* Types.swift */,
 				CEEBFD741A5A256E0014D017 /* Record.swift */,
 				CEEBFD771A5A57DC0014D017 /* Request.swift */,
 				CE7DFA7E1A5B6AE200221B93 /* Server.swift */,
 				CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */,
 				CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */,
 				CE57390C1A65179200AB02B8 /* Util.swift */,
+				E99E5FDE1AA2D8B600BED31D /* Router.swift */,
 			);
 			path = SwiftCGI;
 			sourceTree = "<group>";
@@ -265,10 +269,11 @@
 			files = (
 				CE7DFA7F1A5B6AE200221B93 /* Server.swift in Sources */,
 				CE052E401A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */,
+				E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */,
 				CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */,
 				CEEBFD751A5A256E0014D017 /* Record.swift in Sources */,
 				CEEBFD781A5A57DC0014D017 /* Request.swift in Sources */,
-				CEEBFD721A5A20590014D017 /* FCGITypes.swift in Sources */,
+				CEEBFD721A5A20590014D017 /* Types.swift in Sources */,
 				CE052E3A1A5CBAAB00F8DA34 /* UIntExtensions.swift in Sources */,
 				CE57390D1A65179200AB02B8 /* Util.swift in Sources */,
 				CE052E431A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */,
@@ -279,13 +284,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E99E5FE01AA2D8B600BED31D /* Router.swift in Sources */,
 				CE57390E1A65197B00AB02B8 /* Util.swift in Sources */,
 				CEEBFD3E1A5A1D430014D017 /* PrimitiveTests.swift in Sources */,
 				CE052E411A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */,
 				CE052E3B1A5CBE1B00F8DA34 /* UIntExtensions.swift in Sources */,
 				CE052E441A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */,
 				CED98B291A5E58090077A4EC /* RecordTests.swift in Sources */,
-				CE052E3C1A5CC17100F8DA34 /* FCGITypes.swift in Sources */,
+				CE052E3C1A5CC17100F8DA34 /* Types.swift in Sources */,
 				CED98B2B1A5E58CD0077A4EC /* HTTPTests.swift in Sources */,
 				CE052E3D1A5CC17700F8DA34 /* Record.swift in Sources */,
 				CE052E3E1A5CC28C00F8DA34 /* Request.swift in Sources */,

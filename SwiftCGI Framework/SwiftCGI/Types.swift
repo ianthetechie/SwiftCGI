@@ -28,10 +28,28 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-// MARK: Public types
+// MARK: Request/response lifecycle
 
 public typealias FCGIRequestParams = [String: String]
 public typealias FCGIRequestHandler = FCGIRequest -> HTTPResponse?
+
+
+//
+// Preware:    Invoked BEFORE the request is handled or a response is generated.
+//             Preware returns an (optionally modified) FCGIRequest; use preware
+//             to modify the request before it is handled.
+// Middleware: Invoked AFTER the request handler has been called, but before
+//             the response is sent back to the client. Middleware allows you to
+//             alter the response (usually by doing things like setting cookies).
+// Postware:   Invoked AFTER the request has completed and the response has been
+//             sent tothe client.
+
+public typealias RequestPrewareHandler = FCGIRequest -> FCGIRequest
+public typealias RequestMiddlewareHandler = (FCGIRequest, HTTPResponse) -> HTTPResponse
+public typealias RequestPostwareHandler = (FCGIRequest, HTTPResponse?) -> Void
+
+
+// MARK: Low-level stuff
 
 public typealias FCGIApplicationStatus = UInt32
 

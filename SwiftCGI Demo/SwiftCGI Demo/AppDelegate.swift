@@ -42,24 +42,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         // Insert code here to initialize your application
         
-        let requestHandler: FCGIRequestHandler = { request in
-            var extraGreeting = ""
-            if let sessionManager = request.getSessionManager() as RequestSessionManager<TransientMemorySessionManager>? {
-                var sessionData: SessionData = sessionManager.getData() ?? [:]
-                
-                if sessionData["visited"] == "true" {
-                    extraGreeting = " again"
-                } else {
-                    sessionData["visited"] = "true"
-                }
-                
-                sessionManager.setData(sessionData)
-            }
-            
-            return HTTPResponse(status: .OK, contentType: .TextPlain, body: "안녕하세요\(extraGreeting), Swifter! The time is now \(NSDate())")
-        }
+        // TODO: Clean up this kludge
+        // NOTE: You should change the root path to match your server configuration
+        let rootRouter = Router(path: "cgi", handleWildcardChildren: true, withHandler: rootHandler)
         
-        server = FCGIServer(port: 9000, requestHandler: requestHandler)
+        let blogRouter = Router(path: "blog", handleWildcardChildren: true, withHandler: blogRootHandler)
+        rootRouter.attachRouter(blogRouter)
+        
+        server = FCGIServer(port: 9000, requestRouter: rootRouter)
         
         // Set up middleware
         server.registerMiddlewareHandler(sessionMiddlewareHandler)

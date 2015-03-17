@@ -59,7 +59,7 @@ class FCGIRecord {
     var fcgiPacketData: NSData {
         var bytes = [UInt8](count: 8, repeatedValue: 0)
         bytes[0] = version.rawValue
-        bytes[1] = type.rawValue
+        bytes[1] = UInt8(type.rawValue)
         
         let (msb, lsb) = requestID.decomposeBigEndian()
         bytes[2] = msb
