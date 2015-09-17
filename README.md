@@ -49,10 +49,9 @@ the wheel. I may do a Swift wrapper around a canonical C implementation in the f
 # Getting Started
 1. Clone the repo
 2. Open the SwiftCGI Demo workspace
-3. Get ticked at Apple for breaking command-line app integration with third-party Frameworks (currently the demo is a full-blown Cocoa app with a totally useless window lol)
-4. Switch the target to SwiftCGIDemo if necessary
-5. Run the project
-6. Configure nginx to serve fcgi from your application (a full nginx
+3. Switch the target to SwiftCGIDemo if necessary
+4. Run the project
+5. Configure nginx to serve fcgi from your application (a full nginx
    tutorial may come later if I get bored, but for now, the following
    nginx.conf snippet should suffice... Put this inside your server block)
 
