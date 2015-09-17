@@ -43,9 +43,8 @@ is in the works.
 ## Credits
 I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of this
 project started as a port of (and is still heavily influenced by) FCGIKit. I started off by porting FCGIKit to Swift,
-and have since rewrittena  lot of things to be more "Swifty." I chose this path because I 1) don't want to re-invent
-the wheel, and 2) felt it would be a lot safer to have a pure Swift FCGI server implementation rather than wrapping
-the FCGI C library *shudder*.
+and have since rewritten a lot of things to be more "Swifty." I chose this path because I don't want to re-invent
+the wheel. I may do a Swift wrapper around a canonical C implementation in the future to ensure the correctness of the implementation.
 
 # Getting Started
 1. Clone the repo
