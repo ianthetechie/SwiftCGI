@@ -65,13 +65,13 @@ public class FCGIRequest {
     
     init(record: BeginRequestRecord) {
         self.record = record
-        keepConnection = record.flags & FCGIRequestFlags.KeepConnection ? true : false
+        keepConnection = record.flags.contains(.KeepConnection) ? true : false
     }
     
     func writeData(data: NSData, toStream stream: FCGIOutputStream) -> Bool {
         if socket != nil {
             if let streamType = FCGIRecordType(rawValue: stream.rawValue) {
-                var remainingData = data.mutableCopy() as NSMutableData
+                let remainingData = data.mutableCopy() as! NSMutableData
                 while remainingData.length > 0 {
                     let chunk = remainingData.subdataWithRange(NSMakeRange(0, min(remainingData.length, 65535)))
                     let outRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: UInt16(chunk.length), paddingLength: 0)

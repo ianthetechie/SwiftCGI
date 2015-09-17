@@ -3,8 +3,10 @@ An object-functional microframework for developing FCGI applications in Swift
 
 ## About
 Well, the title pretty much says it all. This is a microframework (no, I'm not writing the next Django or Rails),
-and it is written in Swift (well, OK, I admit, there is a little bit of Objective-C in here because I saw no need
-to throw out the perfectly good piece of work that is GCDAsyncSocket).
+and it is written in Swift (well, OK, I admit, there is a little bit
+of Objective-C in here because I needed a quick socket library; a
+better version is in the works, most likely wrapping a more
+established C library).
 
 ## Why?
 A valid question. Mostly because I was bored last weekend. Also, because I am passionate about a couple of things.
@@ -27,10 +29,16 @@ will work well with both relational and non-relational databases) and a few othe
 have as many features as Django.
 
 ## Current status
-I would currently classify SwiftCGI as alpha status in that it is a funcitonal base that exhibits proper modular
-design, is (mostly) unit tested, but is still rather incomplete. It is not ready for prime time yet, so expect
-things to change very rapidly over the next few months. (NOTE: The current server has the same limitations of
+I would currently classify SwiftCGI as alpha
+in that it is a funcitonal base that mostly modular design, is
+(mostly) unit tested, but is still rather incomplete. It is not ready
+for prime time yet, so expect things to change very rapidly over the
+next few months. (NOTE: The current server has the same limitations of
 FCGIKit, which will be remedied in the future).
+
+The project and demos are currently Swift 2.0 compatible, but have not
+yet been fully rewritten to capture the true spirit of Swift 2.0. This
+is in the works.
 
 ## Credits
 I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of this

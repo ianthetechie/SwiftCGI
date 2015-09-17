@@ -49,6 +49,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     }()
     
     private var currentRequests: [String: FCGIRequest] = [:]
+    private var activeSockets: Set<GCDAsyncSocket> = []
     
     private var registeredPreware: [RequestPrewareHandler] = []
     private var registeredMiddleware: [RequestMiddlewareHandler] = []
@@ -66,12 +67,8 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     
     // MARK: Instance methods
     
-    public func startWithError(errorPtr: NSErrorPointer) -> Bool {
-        if listener.acceptOnPort(port, error: errorPtr) {
-            return true
-        } else {
-            return false
-        }
+    public func start() throws {
+        try listener.acceptOnPort(port)
     }
     
     func handleRecord(record: FCGIRecord, fromSocket socket: GCDAsyncSocket) {
@@ -83,7 +80,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
         // we have covered all cases
         switch record.type {
         case .BeginRequest:
-            let request = FCGIRequest(record: record as BeginRequestRecord)
+            let request = FCGIRequest(record: record as! BeginRequestRecord)
             request.socket = socket
             
             objc_sync_enter(currentRequests)
@@ -97,7 +94,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
             objc_sync_exit(currentRequests)
             
             if let request = maybeRequest {
-                if let params = (record as ParamsRecord).params {
+                if let params = (record as! ParamsRecord).params {
                     if request._params == nil {
                         request._params = [:]
                     }
@@ -122,7 +119,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                     request.streamData = NSMutableData(capacity: 65536)
                 }
                 
-                if let recordData = (record as ByteStreamRecord).rawData {
+                if let recordData = (record as! ByteStreamRecord).rawData {
                     request.streamData!.appendData(recordData)
                 } else {
                     // TODO: Future - when Swift gets exception handling, wrap this
@@ -188,6 +185,8 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     // MARK: GCDAsyncSocketDelegate methods
     
     public func socket(sock: GCDAsyncSocket!, didAcceptNewSocket newSocket: GCDAsyncSocket!) {
+        activeSockets.insert(newSocket)
+        
         // Looks like a leak, but isn't.
         let acceptedSocketQueue = dispatch_queue_create("SocketAcceptQueue-\(newSocket.connectedPort)", DISPATCH_QUEUE_SERIAL)
         newSocket.delegateQueue = acceptedSocketQueue
@@ -196,8 +195,9 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     }
     
     public func socketDidDisconnect(sock: GCDAsyncSocket?, withError err: NSError!) {
-        if sock != nil {
-            recordContext[sock!] = nil
+        if let sock = sock {
+            recordContext[sock] = nil
+            activeSockets.remove(sock)
         } else {
             NSLog("WARNING: nil sock disconnect")
         }

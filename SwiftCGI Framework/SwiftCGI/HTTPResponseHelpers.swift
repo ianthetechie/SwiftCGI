@@ -39,11 +39,11 @@ public struct HTTPResponse {
         // set as a property at creation time, and the former is computed
         // dynamically. Both are obviously non-negotiable.
         var finalHeaders = _headers
-        finalHeaders = setHeader(.ContentType(contentType), finalHeaders)
-        finalHeaders = setHeader(.ContentLength(contentLength), finalHeaders)
+        finalHeaders = setHeader(.ContentType(contentType), collection: finalHeaders)
+        finalHeaders = setHeader(.ContentLength(contentLength), collection: finalHeaders)
         
         for header in _headers {
-            finalHeaders = setHeader(header, finalHeaders)
+            finalHeaders = setHeader(header, collection: finalHeaders)
         }
         
         return finalHeaders
@@ -53,12 +53,12 @@ public struct HTTPResponse {
     
     // MARK: Computed properties
     
-    public var contentLength: Int { return countElements(body.utf8) }
+    public var contentLength: Int { return body.utf8.count }
     public var headerString: String {
         let httpStart = "HTTP/1.1 \(status.rawValue) \(status.description)"
         
-        let httpHeaderString = HTTPNewline.join(map(headers, { header in "\(header.key): \(header.serializedValue)" }))
-        return HTTPNewline.join([httpStart, httpHeaderString]) + HTTPTerminator
+        let httpHeaderString = headers.map({ header in "\(header.key): \(header.serializedValue)" }).joinWithSeparator(HTTPNewline)
+        return [httpStart, httpHeaderString].joinWithSeparator(HTTPNewline) + HTTPTerminator
     }
     public var responseData: NSData? {
         let responseString = headerString + body as NSString
@@ -96,6 +96,6 @@ public struct HTTPResponse {
             break   // no more special behaviors
         }
         
-        _headers = setHeader(header, _headers)
+        _headers = setHeader(header, collection: _headers)
     }
 }

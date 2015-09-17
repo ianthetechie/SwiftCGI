@@ -216,6 +216,8 @@
 		CEEBFD221A5A1D420014D017 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Ian Wagner";
 				TargetAttributes = {

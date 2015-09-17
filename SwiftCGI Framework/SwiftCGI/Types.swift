@@ -102,18 +102,18 @@ enum FCGIRecordType: UInt8 {
     case GetValuesResult = 10
 }
 
-struct FCGIRequestFlags : RawOptionSetType, BooleanType {
+struct FCGIRequestFlags : OptionSetType, BooleanType {
     typealias RawValue = UInt
     private var value: UInt = 0
     init(_ value: UInt) { self.value = value }
     init(rawValue value: UInt) { self.value = value }
     init(nilLiteral: ()) { self.value = 0 }
-    static var allZeros: FCGIRequestFlags { return self(0) }
-    static func fromMask(raw: UInt) -> FCGIRequestFlags { return self(raw) }
+    static var allZeros: FCGIRequestFlags { return self.init(0) }
+    static func fromMask(raw: UInt) -> FCGIRequestFlags { return self.init(raw) }
     var rawValue: UInt { return self.value }
     var boolValue: Bool { return self.value != 0 }
     
-    static var None: FCGIRequestFlags { return self(0) }
+    static var None: FCGIRequestFlags { return self.init(0) }
     static var KeepConnection: FCGIRequestFlags { return FCGIRequestFlags(1 << 0) }
 }
 

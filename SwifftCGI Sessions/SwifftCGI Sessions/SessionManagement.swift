@@ -39,7 +39,7 @@ public typealias SessionData = [String: String]
 public protocol SessionManager {
     func getDataForSessionID(sessionID: SessionID) -> SessionData?
     func setData(data: SessionData, forSessionID sessionID: SessionID)
-    class func sharedInstance() -> SessionManager
+    static func sharedInstance() -> SessionManager
 }
 
 
@@ -53,6 +53,7 @@ public class RequestSessionManager<T: SessionManager> {
         if let id = request.sessionID {
             sessionID = id
         } else {
+            sessionID = nil
             return nil
         }
     }

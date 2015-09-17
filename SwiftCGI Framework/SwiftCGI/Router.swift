@@ -26,12 +26,12 @@ public class Router {
     
     public func route(path: String) -> FCGIRequestHandler? {
         // TODO: Seems a bit kludgey... Functional, but kludgey...
-        let components = filter(path.pathComponents) { return $0 != "/" }
+        let components = (path as NSString).pathComponents.filter { return $0 != "/" }
         
         if components.count > 0 {
             if components.count > 1 {
                 // Match on sub-routers first
-                let subPath = "/".join(Array<String>(components[1..<components.count]))
+                let subPath = Array<String>(components[1..<components.count]).joinWithSeparator("/")
                 for subrouter in subrouters {
                     if let subhandler = subrouter.route(subPath) {
                         return subhandler

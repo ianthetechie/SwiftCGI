@@ -122,7 +122,7 @@ class EndRequestRecord: FCGIRecord {
     }
     
     override var fcgiPacketData: NSData {
-        let result = super.fcgiPacketData.mutableCopy() as NSMutableData
+        let result = super.fcgiPacketData.mutableCopy() as! NSMutableData
         
         var extraBytes = [UInt8](count: 8, repeatedValue: 0)
         
@@ -161,7 +161,7 @@ class ByteStreamRecord: FCGIRecord {
     }
     
     override var fcgiPacketData: NSData {
-        let result = super.fcgiPacketData.mutableCopy() as NSMutableData
+        let result = super.fcgiPacketData.mutableCopy() as! NSMutableData
         if let data = _rawData {
             result.appendData(data)
         }
@@ -190,7 +190,7 @@ class ParamsRecord: FCGIRecord {
         var paramData: [String: String] = [:]
         
         //Remove Padding
-        let unpaddedData = data.subdataWithRange(NSMakeRange(0, Int(contentLength))).mutableCopy() as NSMutableData
+        let unpaddedData = data.subdataWithRange(NSMakeRange(0, Int(contentLength))).mutableCopy() as! NSMutableData
         while unpaddedData.length > 0 {
             var pos0 = 0, pos1 = 0, pos4 = 0
             
@@ -251,8 +251,8 @@ class ParamsRecord: FCGIRecord {
             let value = NSString(data: unpaddedData.subdataWithRange(NSMakeRange(0,valueLength)), encoding: NSUTF8StringEncoding)
             unpaddedData.replaceBytesInRange(NSMakeRange(0,valueLength), withBytes: nil, length: 0)
             
-            if key != nil && value != nil {
-                paramData[key!] = value!
+            if let key = key as? String, value = value as? String {
+                paramData[key] = value
             } else {
                 fatalError("Unable to decode key or value from content")  // non-decodable value
             }

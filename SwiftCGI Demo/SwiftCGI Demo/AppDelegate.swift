@@ -54,15 +54,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Set up middleware
         server.registerMiddlewareHandler(sessionMiddlewareHandler)
         
-        var err: NSError?
-        server.startWithError(&err)
-        
-        if let error = err {
-            println("Failed to start SwiftCGI server")
-            println(err)
+        do {
+            try server.start()
+            print("Started SwiftCGI server on port \(server.port)")
+        } catch {
+            print("Failed to start SwiftCGI server")
             exit(1)
-        } else {
-            println("Started SwiftCGI server on port \(server.port)")
         }
         
         // Set ourselves up in the status bar (top of the screen)

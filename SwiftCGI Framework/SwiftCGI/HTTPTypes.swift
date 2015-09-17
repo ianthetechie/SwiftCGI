@@ -88,9 +88,9 @@ public class HTTPHeaderGenerator<T: HTTPHeader>: GeneratorType {
         switch collection {
         case .Leaf:
             return nil
-        case .Node(let left, let current, let right):
+        case .Node(_, let current, _):
             // Remove current from the internal tree, then return current
-            collection = removeHeaderForKey(current.unboxedValue.key, collection)
+            collection = removeHeaderForKey(current.unboxedValue.key, collection: collection)
             return current.unboxedValue
         }
     }
@@ -104,7 +104,7 @@ public enum HTTPHeaderCollection<T: HTTPHeader>: SequenceType, Equatable {
     case Leaf
     case Node(Box<HTTPHeaderCollection<T>>, Box<T>, Box<HTTPHeaderCollection<T>>)
     
-    typealias Generator = HTTPHeaderGenerator<T>
+    public typealias Generator = HTTPHeaderGenerator<T>
     public func generate() -> Generator {
         return HTTPHeaderGenerator(collection: self)
     }
@@ -161,7 +161,7 @@ func findMinimumNode<T: HTTPHeader>(collection: HTTPHeaderCollection<T>) -> T? {
     switch collection {
     case .Leaf:
         return nil
-    case .Node(let left, let value, let right):
+    case .Node(let left, let value, _):
         if isLeaf(left.unboxedValue) {
             return value.unboxedValue
         } else {
@@ -179,9 +179,9 @@ public func getHeaderForKey<T: HTTPHeader>(key: String, collection: HTTPHeaderCo
         if value.key == key {
             return value
         } else if key < value.key {
-            return getHeaderForKey(key, left.unboxedValue)
+            return getHeaderForKey(key, collection: left.unboxedValue)
         } else {
-            return getHeaderForKey(key, right.unboxedValue)
+            return getHeaderForKey(key, collection: right.unboxedValue)
         }
     }
 }
@@ -201,10 +201,10 @@ public func removeHeaderForKey<T: HTTPHeader>(key: String, collection: HTTPHeade
             } else {
                 // The complicated case: we have two children that are non-terminal
                 let minimumNode = findMinimumNode(right.unboxedValue)!     // This should never fail to unwrap
-                return .Node(left, Box(minimumNode), Box(removeHeaderForKey(minimumNode.key, right.unboxedValue)))
+                return .Node(left, Box(minimumNode), Box(removeHeaderForKey(minimumNode.key, collection: right.unboxedValue)))
             }
         } else {
-            return .Node(Box(removeHeaderForKey(key, left.unboxedValue)), current, Box(removeHeaderForKey(key, right.unboxedValue)))
+            return .Node(Box(removeHeaderForKey(key, collection: left.unboxedValue)), current, Box(removeHeaderForKey(key, collection: right.unboxedValue)))
         }
     }
 }
@@ -220,18 +220,18 @@ public func setHeader<T: HTTPHeader>(header: T, collection: HTTPHeaderCollection
         if current.unboxedValue.key == header.key {
             return .Node(left, Box(header), right)
         } else if (header.key < current.unboxedValue.key) {
-            return .Node(Box(setHeader(header, left.unboxedValue)), current, right)
+            return .Node(Box(setHeader(header, collection: left.unboxedValue)), current, right)
         } else {
-            return .Node(left, current, Box(setHeader(header, right.unboxedValue)))
+            return .Node(left, current, Box(setHeader(header, collection: right.unboxedValue)))
         }
     }
 }
 
 
 func serializeHeaders<T: HTTPHeader>(headers: HTTPHeaderCollection<T>) -> String {
-    return HTTPNewline.join(map(headers, { (header) -> String in
+    return headers.map({ (header) -> String in
         return "\(header.key): \(header.serializedValue)"
-    }))
+    }).joinWithSeparator(HTTPNewline)
 }
 
 
@@ -253,7 +253,7 @@ public enum HTTPResponseHeader: HTTPHeader {
         switch self {
         case .ContentLength(let length): return length.description
         case .ContentType(let contentType): return "\(contentType.rawValue); charset=utf-8" // TODO: FUTURE - would we ever want to allow another content type? If so, how? All data is converted to UTF-8 in the current architecture, so it makes sense to hardcode it right now.
-        case .SetCookie(let cookies): return "\(HTTPNewline)\(self.key): ".join(map(cookies, { (key, value) in "\(key)=\(value)" }))
+        case .SetCookie(let cookies): return cookies.map({ (key, value) in "\(key)=\(value)" }).joinWithSeparator("\(HTTPNewline)\(self.key): ")
         }
     }
 }
