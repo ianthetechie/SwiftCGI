@@ -67,7 +67,7 @@ public class RequestSessionManager<T: SessionManager> {
     }
 }
 
-// MARK: Can't get much more basic thatn this; session data is sent to /dev/null
+// MARK: Can't get much more basic than this; session data is sent to /dev/null
 
 public class NilSessionManager: SessionManager {
     public func getDataForSessionID(sessionID: SessionID) -> SessionData? {
