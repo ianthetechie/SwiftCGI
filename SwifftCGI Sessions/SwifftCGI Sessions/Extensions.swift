@@ -57,9 +57,9 @@ public extension FCGIRequest {
 // Define a handler function to modify the response accordingly
 public func sessionMiddlewareHandler(request: FCGIRequest, var response: HTTPResponse) -> HTTPResponse {
     // Add the session cookie if necessary
-    if request.sessionID == nil {
+    if let sessionID = request.sessionID {
         request.generateSessionID()
-        response.setResponseHeader(.SetCookie([SessionIDCookieName: "\(request.sessionID!); Max-Age=86400"]))
+        response.setResponseHeader(.SetCookie([SessionIDCookieName: "\(sessionID); Max-Age=86400"]))
     }
     
     return response

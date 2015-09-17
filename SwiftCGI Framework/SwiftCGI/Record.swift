@@ -33,15 +33,9 @@
 
 // Base struct (should never be directly instantiated)
 class FCGIRecord {
-    // NOTE: As of this writing, the Swift compiler will throw an error
-    // about uninitialized stored properties, due to the failable nature
-    // of the initializer. This is of course rubbish, as there is no point
-    // initializing stored properties when you know that construction has
-    // failed early on, so these properties are marked as implicitly unwrapped
-    // optionals... for now...
-    let version: FCGIVersion!
-    let requestID: FCGIRequestID!
-
+    let version: FCGIVersion
+    let requestID: FCGIRequestID
+    
     // A public getter exposes the private constant storage because certain types
     // of record subclasses are used for incoming data (in which the content length
     // is known at instantiation), and others compute content length before
@@ -49,10 +43,10 @@ class FCGIRecord {
     //
     // NOTE: The total data length = contentLenth + paddingLength. Padding
     // is extra data that is ignored.
-    let _initContentLength: FCGIContentLength!
+    let _initContentLength: FCGIContentLength
     var contentLength: FCGIContentLength { return _initContentLength }
     
-    let paddingLength: FCGIPaddingLength!
+    let paddingLength: FCGIPaddingLength
     
     var type: FCGIRecordType { fatalError("Not Implemented") }
     
@@ -81,15 +75,16 @@ class FCGIRecord {
         self.paddingLength = paddingLength
     }
     
-     func processContentData(data: NSData) {
+    // TODO: Not sure if I like this approach of self-modifying objects...
+    func processContentData(data: NSData) {
         fatalError("Not Implemented")
     }
 }
 
 // Begin request record
 class BeginRequestRecord: FCGIRecord {
-    var role: FCGIRequestRole!
-    var flags: FCGIRequestFlags!
+    var role: FCGIRequestRole?
+    var flags: FCGIRequestFlags?
     
     override var type: FCGIRecordType { return .BeginRequest }
     

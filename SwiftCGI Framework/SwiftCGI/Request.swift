@@ -60,59 +60,60 @@ public class FCGIRequest {
         }
     }
     
-    var socket: GCDAsyncSocket!     // Set externally by the server
+    var socket: GCDAsyncSocket?     // Set externally by the server
     var streamData: NSMutableData?
     
     init(record: BeginRequestRecord) {
         self.record = record
-        keepConnection = record.flags.contains(.KeepConnection) ? true : false
+        keepConnection = record.flags?.contains(.KeepConnection) ?? false
     }
     
     func writeData(data: NSData, toStream stream: FCGIOutputStream) -> Bool {
-        if socket != nil {
-            if let streamType = FCGIRecordType(rawValue: stream.rawValue) {
-                let remainingData = data.mutableCopy() as! NSMutableData
-                while remainingData.length > 0 {
-                    let chunk = remainingData.subdataWithRange(NSMakeRange(0, min(remainingData.length, 65535)))
-                    let outRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: UInt16(chunk.length), paddingLength: 0)
-                    outRecord.setRawData(chunk)
-                    
-                    outRecord.type = streamType
-                    socket.writeData(outRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
-                    
-                    // Remove the data we just sent from the buffer
-                    remainingData.replaceBytesInRange(NSMakeRange(0, chunk.length), withBytes: nil, length: 0)
-                }
-                
-                let termRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: 0, paddingLength: 0)
-                termRecord.type = streamType
-                socket.writeData(termRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
-                return true
-            } else {
-                NSLog("ERROR: invalid stream type")
-            }
-        } else {
-            NSLog("ERROR: No socket for request")
-        }
-        
-        return false
-    }
-    
-    func finishWithProtocolStatus(protocolStatus: FCGIProtocolStatus, andApplicationStatus applicationStatus: FCGIApplicationStatus) -> Bool {
-        if socket != nil {
-            let outRecord = EndRequestRecord(version: record.version, requestID: record.requestID, paddingLength: 0, protocolStatus: protocolStatus, applicationStatus: applicationStatus)
-            socket.writeData(outRecord.fcgiPacketData, withTimeout: 5, tag: 0)
-            
-            if keepConnection {
-                socket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
-            } else {
-                socket.disconnectAfterWriting()
-            }
-            
-            return true
-        } else {
+        guard let sock = socket else {
             NSLog("ERROR: No socket for request")
             return false
         }
+        
+        guard let streamType = FCGIRecordType(rawValue: stream.rawValue) else {
+            NSLog("ERROR: invalid stream type")
+            return false
+        }
+        
+        let remainingData = data.mutableCopy() as! NSMutableData
+        while remainingData.length > 0 {
+            let chunk = remainingData.subdataWithRange(NSMakeRange(0, min(remainingData.length, 65535)))
+            let outRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: UInt16(chunk.length), paddingLength: 0)
+            outRecord.setRawData(chunk)
+            
+            outRecord.type = streamType
+            sock.writeData(outRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
+            
+            // Remove the data we just sent from the buffer
+            remainingData.replaceBytesInRange(NSMakeRange(0, chunk.length), withBytes: nil, length: 0)
+        }
+        
+        let termRecord = ByteStreamRecord(version: record.version, requestID: record.requestID, contentLength: 0, paddingLength: 0)
+        termRecord.type = streamType
+        sock.writeData(termRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
+        
+        return true
+    }
+    
+    func finishWithProtocolStatus(protocolStatus: FCGIProtocolStatus, andApplicationStatus applicationStatus: FCGIApplicationStatus) -> Bool {
+        guard let sock = socket else {
+            NSLog("ERROR: No socket for request")
+            return false
+        }
+        
+        let outRecord = EndRequestRecord(version: record.version, requestID: record.requestID, paddingLength: 0, protocolStatus: protocolStatus, applicationStatus: applicationStatus)
+        sock.writeData(outRecord.fcgiPacketData, withTimeout: 5, tag: 0)
+        
+        if keepConnection {
+            sock.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
+        } else {
+            sock.disconnectAfterWriting()
+        }
+        
+        return true
     }
 }

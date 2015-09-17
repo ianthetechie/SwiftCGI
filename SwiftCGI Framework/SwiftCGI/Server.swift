@@ -74,7 +74,10 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     func handleRecord(record: FCGIRecord, fromSocket socket: GCDAsyncSocket) {
         let globalRequestID = "\(record.requestID)-\(socket.connectedPort)"
         
-        // switch on record.type, since types can be mapped 1:1 to an FCGIRecord
+        // TODO: Guards to handle early exits in odd cases like malformed data; I don't like all of
+        // the forced unwrapping going on here right now...
+        
+        // Switch on record.type, since types can be mapped 1:1 to an FCGIRecord
         // subclass. This allows for a much cleaner chunk of code than a handful
         // of if/else ifs chained together, and allows the compiler to check that
         // we have covered all cases
@@ -153,7 +156,10 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                         }
                     }
                     
-                    recordContext[request.socket] = nil
+                    if let sock = request.socket {
+                        recordContext[sock] = nil
+                    }
+                    
                     objc_sync_enter(currentRequests)
                     currentRequests.removeValueForKey(globalRequestID)
                     objc_sync_exit(currentRequests)

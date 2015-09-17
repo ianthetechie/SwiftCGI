@@ -44,7 +44,7 @@ public protocol SessionManager {
 
 
 public class RequestSessionManager<T: SessionManager> {
-    let sessionID: SessionID!   // Implicitly unwrapped to prevent the return nil compiler error
+    let sessionID: SessionID
     let sessionManager: SessionManager
     
     public init?(request: FCGIRequest) {
@@ -53,7 +53,7 @@ public class RequestSessionManager<T: SessionManager> {
         if let id = request.sessionID {
             sessionID = id
         } else {
-            sessionID = nil
+            sessionID = ""  // Silly compiler; the initializer failed... *shrug*
             return nil
         }
     }
