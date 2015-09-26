@@ -1,0 +1,3 @@
+[submodule "SwiftCGI Framework/httpParser/http_parser"]
+	path = SwiftCGI Framework/httpParser/http_parser
+	url = git@github.com:joyent/http-parser.git

@@ -1,0 +1,11 @@
+module HttpParser {
+    explicit module Parser {
+        header "./http_parser/http_parser.h"
+        export *
+    }
+    
+    explicit module Accessors {
+        header "./http_parser_accessors.h"
+        export *
+    }
+}

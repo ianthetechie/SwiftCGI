@@ -54,6 +54,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     private var registeredPreware: [RequestPrewareHandler] = []
     private var registeredMiddleware: [RequestMiddlewareHandler] = []
     private var registeredPostware: [RequestPostwareHandler] = []
+    private let httpParser = HTTPParser()
     
     // MARK: Init
     
@@ -196,7 +197,13 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
         let acceptedSocketQueue = dispatch_queue_create("SocketAcceptQueue-\(newSocket.connectedPort)", DISPATCH_QUEUE_SERIAL)
         newSocket.delegateQueue = acceptedSocketQueue
         
-        newSocket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
+        if DEVSERVER {
+            newSocket.readDataToData("\r\n".dataUsingEncoding(NSUTF8StringEncoding), withTimeout: 1000, tag: 0)
+        }
+        else {
+            newSocket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout,
+                tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
+        }
     }
     
     public func socketDidDisconnect(sock: GCDAsyncSocket?, withError err: NSError!) {
@@ -209,35 +216,42 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     }
     
     public func socket(sock: GCDAsyncSocket!, didReadData data: NSData!, withTag tag: Int) {
-        if let socketTag = FCGISocketTag(rawValue: tag) {
-            switch socketTag {
-            case .AwaitingHeaderTag:
-                // TODO: Clean up this
-                // Phase 1 of 2 possible phases; first, try to parse the header
-                if let record = createRecordFromHeaderData(data) {
-                    if record.contentLength == 0 {
-                        // No content; handle the message
+        if DEVSERVER {
+            print(NSString(data: data, encoding: NSUTF8StringEncoding)!)
+            httpParser.parseDataChunk(data)
+            sock.readDataWithTimeout(1000, tag: 0)
+        }
+        else {
+            if let socketTag = FCGISocketTag(rawValue: tag) {
+                switch socketTag {
+                case .AwaitingHeaderTag:
+                    // TODO: Clean up this
+                    // Phase 1 of 2 possible phases; first, try to parse the header
+                    if let record = createRecordFromHeaderData(data) {
+                        if record.contentLength == 0 {
+                            // No content; handle the message
+                            handleRecord(record, fromSocket: sock)
+                        } else {
+                            // Read additional content
+                            recordContext[sock] = record
+                            sock.readDataToLength(UInt(record.contentLength) + UInt(record.paddingLength), withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingContentAndPaddingTag.rawValue)
+                        }
+                    } else {
+                        NSLog("ERROR: Unable to construct request record")
+                        sock.disconnect()
+                    }
+                case .AwaitingContentAndPaddingTag:
+                    if let record = recordContext[sock] {
+                        record.processContentData(data)
                         handleRecord(record, fromSocket: sock)
                     } else {
-                        // Read additional content
-                        recordContext[sock] = record
-                        sock.readDataToLength(UInt(record.contentLength) + UInt(record.paddingLength), withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingContentAndPaddingTag.rawValue)
+                        NSLog("ERROR: Case .AwaitingContentAndPaddingTag hit with no context")
                     }
-                } else {
-                    NSLog("ERROR: Unable to construct request record")
-                    sock.disconnect()
                 }
-            case .AwaitingContentAndPaddingTag:
-                if let record = recordContext[sock] {
-                    record.processContentData(data)
-                    handleRecord(record, fromSocket: sock)
-                } else {
-                    NSLog("ERROR: Case .AwaitingContentAndPaddingTag hit with no context")
-                }
+            } else {
+                NSLog("ERROR: Unknown socket tag")
+                sock.disconnect()
             }
-        } else {
-            NSLog("ERROR: Unknown socket tag")
-            sock.disconnect()
         }
     }
 }

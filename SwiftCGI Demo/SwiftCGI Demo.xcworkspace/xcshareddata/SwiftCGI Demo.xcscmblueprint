@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "C5F5259C3CDB1C6AC3C26B07B96DBA4125C7E925",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "C5F5259C3CDB1C6AC3C26B07B96DBA4125C7E925" : 0,
+    "90C3FD88F8002F902A5FDF9D64063244571F233C" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "226AEA95-AB47-4493-9ACA-55DBEBD30EA9",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "C5F5259C3CDB1C6AC3C26B07B96DBA4125C7E925" : "SwiftCGI",
+    "90C3FD88F8002F902A5FDF9D64063244571F233C" : "SwiftCGI\/SwiftCGI%20Framework\/httpParser\/http_parser\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "SwiftCGI Demo",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "SwiftCGI Demo\/SwiftCGI Demo.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:joyent\/http-parser.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "90C3FD88F8002F902A5FDF9D64063244571F233C"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ianthetechie\/SwiftCGI.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "C5F5259C3CDB1C6AC3C26B07B96DBA4125C7E925"
+    }
+  ]
+}

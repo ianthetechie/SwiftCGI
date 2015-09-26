@@ -30,6 +30,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+const BOOL DEVSERVER = YES;
+
 //! Project version number for SwiftCGI.
 FOUNDATION_EXPORT double SwiftCGIVersionNumber;
 
