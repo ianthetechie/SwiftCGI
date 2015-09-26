@@ -34,11 +34,11 @@ import SwiftCGI
 
 let SessionIDCookieName = "sessionid"
 
-// Extension to implement session handling properties on FCGIRequest
-public extension FCGIRequest {
+// Extension to implement session handling properties on Request
+public extension Request {
     public var sessionID: String? { return cookies?[SessionIDCookieName] }
     
-    public func generateSessionID() {
+    public mutating func generateSessionID() {
         if sessionID == nil {
             var newCookies = cookies ?? [:]
             newCookies[SessionIDCookieName] = NSUUID().UUIDString
@@ -55,10 +55,13 @@ public extension FCGIRequest {
 
 
 // Define a handler function to modify the response accordingly
-public func sessionMiddlewareHandler(request: FCGIRequest, var response: HTTPResponse) -> HTTPResponse {
+public func sessionMiddlewareHandler(var request: Request, var response: HTTPResponse) -> HTTPResponse {
     // Add the session cookie if necessary
-    if let sessionID = request.sessionID {
+    if request.sessionID == nil {
         request.generateSessionID()
+    }
+    
+    if let sessionID = request.sessionID {
         response.setResponseHeader(.SetCookie([SessionIDCookieName: "\(sessionID); Max-Age=86400"]))
     }
     

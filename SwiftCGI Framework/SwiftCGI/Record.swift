@@ -176,8 +176,8 @@ class ByteStreamRecord: FCGIRecord {
 class ParamsRecord: FCGIRecord {
     // This stored property is an implicitly unwrapped optional so that we can
     // call super.init early on in the init process to retrieve the content length
-    private var _params: FCGIRequestParams?
-    var params: FCGIRequestParams? { return _params }    // read-only accessor
+    private var _params: RequestParams?
+    var params: RequestParams? { return _params }    // read-only accessor
     
     override var type: FCGIRecordType { return .Params }
     

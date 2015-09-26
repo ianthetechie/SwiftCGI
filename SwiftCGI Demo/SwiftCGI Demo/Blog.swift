@@ -9,7 +9,7 @@
 import Foundation
 import SwiftCGI
 
-let blogRootHandler: FCGIRequestHandler = { request in
+let blogRootHandler: RequestHandler = { request in
     var extraGreeting = ""
     
     return HTTPResponse(status: .OK, contentType: .TextPlain, body: "Welcome to my blog!")

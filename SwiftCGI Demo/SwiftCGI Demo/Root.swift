@@ -10,7 +10,7 @@ import Foundation
 import SwiftCGI
 import SwiftCGISessions
 
-let rootHandler: FCGIRequestHandler = { request in
+let rootHandler: RequestHandler = { request in
     var extraGreeting = ""
     if let sessionManager = request.getSessionManager() as RequestSessionManager<TransientMemorySessionManager>? {
         var sessionData: SessionData = sessionManager.getData() ?? [:]

@@ -30,8 +30,8 @@
 
 // MARK: Request/response lifecycle
 
-public typealias FCGIRequestParams = [String: String]
-public typealias FCGIRequestHandler = FCGIRequest -> HTTPResponse?
+public typealias RequestParams = [String: String]
+public typealias RequestHandler = Request -> HTTPResponse?
 
 
 //
@@ -42,11 +42,14 @@ public typealias FCGIRequestHandler = FCGIRequest -> HTTPResponse?
 //             the response is sent back to the client. Middleware allows you to
 //             alter the response (usually by doing things like setting cookies).
 // Postware:   Invoked AFTER the request has completed and the response has been
-//             sent tothe client.
+//             sent to the client.
+//
 
-public typealias RequestPrewareHandler = FCGIRequest -> FCGIRequest
-public typealias RequestMiddlewareHandler = (FCGIRequest, HTTPResponse) -> HTTPResponse
-public typealias RequestPostwareHandler = (FCGIRequest, HTTPResponse?) -> Void
+// TODO: Make these Request instances generic once Swift sees the light and lets us do generic
+// typeclasses
+public typealias RequestPrewareHandler = Request -> Request
+public typealias RequestMiddlewareHandler = (Request, HTTPResponse) -> HTTPResponse
+public typealias RequestPostwareHandler = (Request, HTTPResponse?) -> Void
 
 
 // MARK: Low-level stuff

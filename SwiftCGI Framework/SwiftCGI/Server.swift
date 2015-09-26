@@ -38,7 +38,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
     // MARK: Properties
     
     public let port: UInt16
-    public var paramsAvailableHandler: (FCGIRequest -> Void)?
+    public var paramsAvailableHandler: (Request -> Void)?
     public var requestRouter: Router
 //    public var requestHandler: FCGIRequestHandler
     
@@ -126,32 +126,31 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
                     request.streamData!.appendData(recordData)
                 } else {
                     // TODO: Future - when Swift gets exception handling, wrap this
+                    // TODO: Refactor this into a separate method
                     for handler in registeredPreware {
-                        request = handler(request)
+                        request = handler(request) as! FCGIRequest  // Because we can't correctly force compiler type checking without generic typealiases
                     }
                     
-                    if let path = request.params["REQUEST_URI"] {
-                        if let requestHandler = requestRouter.route(path) {
-                            if var response = requestHandler(request) {
-                                for handler in registeredMiddleware {
-                                    response = handler(request, response)
-                                }
-                                
-                                if let responseData = response.responseData {
-                                    request.writeData(responseData, toStream: FCGIOutputStream.Stdout)
-                                }
-                                
-                                request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
-                                
-                                for handler in registeredPostware {
-                                    handler(request, response)
-                                }
-                            } else {
-                                request.finishWithProtocolStatus(FCGIProtocolStatus.RequestComplete, andApplicationStatus: 0)
-                                
-                                for handler in registeredPostware {
-                                    handler(request, nil)
-                                }
+                    if let requestHandler = requestRouter.route(request.path) {
+                        if var response = requestHandler(request) {
+                            for handler in registeredMiddleware {
+                                response = handler(request, response)
+                            }
+                            
+                            if let responseData = response.responseData {
+                                request.writeResponseData(responseData, toStream: FCGIOutputStream.Stdout)
+                            }
+                            
+                            request.finish(.Complete)
+                            
+                            for handler in registeredPostware {
+                                handler(request, response)
+                            }
+                        } else {
+                            request.finish(.Complete)
+                            
+                            for handler in registeredPostware {
+                                handler(request, nil)
                             }
                         }
                     }
@@ -213,6 +212,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate {
         if let socketTag = FCGISocketTag(rawValue: tag) {
             switch socketTag {
             case .AwaitingHeaderTag:
+                // TODO: Clean up this
                 // Phase 1 of 2 possible phases; first, try to parse the header
                 if let record = createRecordFromHeaderData(data) {
                     if record.contentLength == 0 {

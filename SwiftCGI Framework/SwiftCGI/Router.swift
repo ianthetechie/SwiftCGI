@@ -12,9 +12,9 @@ public class Router {
     private var subrouters: [Router] = []
     private let path: String
     private let wildcard: Bool
-    private let handler: FCGIRequestHandler?
+    private let handler: RequestHandler?
     
-    public init(path: String, handleWildcardChildren wildcard: Bool, withHandler handler: FCGIRequestHandler?) {
+    public init(path: String, handleWildcardChildren wildcard: Bool, withHandler handler: RequestHandler?) {
         self.path = path
         self.wildcard = wildcard
         self.handler = handler
@@ -24,7 +24,7 @@ public class Router {
         subrouters.append(subrouter)
     }
     
-    public func route(path: String) -> FCGIRequestHandler? {
+    public func route(path: String) -> RequestHandler? {
         // TODO: Seems a bit kludgey... Functional, but kludgey...
         let components = (path as NSString).pathComponents.filter { return $0 != "/" }
         
