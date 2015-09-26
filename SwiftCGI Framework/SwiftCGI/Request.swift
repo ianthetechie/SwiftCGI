@@ -19,6 +19,6 @@ public protocol Request {
     var streamData: NSMutableData? { get set }
     var socket: GCDAsyncSocket? { get set }
     
-    // TODO: writeResponseData
+    // TODO: writeResponseData (or something similar)
     func finish(status: RequestCompletionStatus)
 }
