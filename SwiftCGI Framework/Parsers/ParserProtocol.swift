@@ -8,8 +8,6 @@
 
 import Foundation
 
-protocol Request{}
-
 protocol ParserDelegate {
     func finishedParsingRequest(request: Request)
 }
@@ -17,6 +15,8 @@ protocol ParserDelegate {
 protocol Parser {
     var delegate: ParserDelegate? { get set }
     
-    func resumeSocketReading(socket: GCDAsyncSocket)
-    func parseData(socket: GCDAsyncSocket, data: NSData, tag: Int)
+    func resumeSocketReading(sock: GCDAsyncSocket)
+    func parseData(sock: GCDAsyncSocket, data: NSData, tag: Int)
+    
+    func socketDisconnect(sock: GCDAsyncSocket)
 }

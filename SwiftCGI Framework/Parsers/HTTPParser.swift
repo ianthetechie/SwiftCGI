@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import HttpParser.Parser
-import HttpParser.Accessors
+import CHttpParser.Parser
+import CHttpParser.Accessors
 
 struct HTTPParserRequest {
     var method: String?
@@ -48,12 +48,17 @@ class HTTPParser: Parser {
         }
     }
     
-    func parseData(socket: GCDAsyncSocket, data: NSData, tag: Int) {
+    func parseData(sock: GCDAsyncSocket, data: NSData, tag: Int) {
         http_parser_execute(&parser, &settings, UnsafePointer<Int8>(data.bytes), data.length)
+        resumeSocketReading(sock)
     }
     
-    func resumeSocketReading(socket: GCDAsyncSocket) {
-        socket.readDataToData(endOfLine, withTimeout: 1000, tag: 0)
+    func resumeSocketReading(sock: GCDAsyncSocket) {
+        sock.readDataToData(endOfLine, withTimeout: 1000, tag: 0)
+    }
+    
+    func socketDisconnect(sock: GCDAsyncSocket) {
+        sock.disconnect()
     }
 }
 

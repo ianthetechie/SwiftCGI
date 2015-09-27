@@ -1,6 +1,6 @@
-module HttpParser {
+module CHttpParser {
     explicit module Parser {
-        header "./http_parser/http_parser.h"
+        header "./http-parser/http_parser.h"
         export *
     }
     

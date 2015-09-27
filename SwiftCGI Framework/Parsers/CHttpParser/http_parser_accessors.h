@@ -9,7 +9,7 @@
 #ifndef http_parser_accessors_h
 #define http_parser_accessors_h
 
-#include "http_parser/http_parser.h"
+#include "http-parser/http_parser.h"
 
 const char* http_parser_get_method(struct http_parser *parser);
 
