@@ -34,7 +34,7 @@
 // NOTE: This class muse inherit from NSObject; otherwise the Obj-C code for
 // GCDAsyncSocket will somehow not be able to store a reference to the delegate
 // (it will remain nil and no error will be logged).
-public class FCGIServer: NSObject, GCDAsyncSocketDelegate, ParserDelegate {
+public class FCGIServer: NSObject, GCDAsyncSocketDelegate, BackendDelegate {
     // MARK: Properties
     
     public let port: UInt16
@@ -52,21 +52,27 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate, ParserDelegate {
     private var registeredPreware: [RequestPrewareHandler] = []
     private var registeredMiddleware: [RequestMiddlewareHandler] = []
     private var registeredPostware: [RequestPostwareHandler] = []
-    private let parser: Parser;
+    private let backend: Backend
+    private let useHttpServer: Bool
     
     // MARK: Init
     
-    public init(port: UInt16, requestRouter: Router) {
-        if DEVSERVER {
-            parser = HTTPParser()
+    public init(port: UInt16, requestRouter: Router, useHttpServer: Bool = true) {
+        self.useHttpServer = useHttpServer
+        
+        if useHttpServer {
+            backend = HTTPBackend()
         } else {
-            parser = FCGIParser()
+            backend = FCGIBackend()
         }
         
         self.port = port
         self.requestRouter = requestRouter
         
         delegateQueue = dispatch_queue_create("SocketAcceptQueue", DISPATCH_QUEUE_SERIAL)
+        super.init()
+        
+        backend.delegate = self
     }
     
     
@@ -100,12 +106,13 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate, ParserDelegate {
         let acceptedSocketQueue = dispatch_queue_create("SocketAcceptQueue-\(newSocket.connectedPort)", DISPATCH_QUEUE_SERIAL)
         newSocket.delegateQueue = acceptedSocketQueue
         
-        parser.resumeSocketReading(newSocket)
+        // Tell the backend we have started reading from a new socket
+        backend.startReadingFromSocket(newSocket)
     }
     
     public func socketDidDisconnect(sock: GCDAsyncSocket?, withError err: NSError!) {
         if let sock = sock {
-            parser.socketDisconnect(sock)
+            backend.cleanUp(sock)
             activeSockets.remove(sock)
         } else {
             NSLog("WARNING: nil sock disconnect")
@@ -113,16 +120,17 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate, ParserDelegate {
     }
     
     public func socket(sock: GCDAsyncSocket!, didReadData data: NSData!, withTag tag: Int) {
-        print(NSString(data: data, encoding: NSUTF8StringEncoding)!)
-        parser.parseData(sock, data: data, tag: tag)
+        // Tell the backend the socket has send us some data, please process it
+        backend.processData(sock, data: data, tag: tag)
     }
     
+    // When out backend has built a full request, it sends it to us to process
     func finishedParsingRequest(request: Request) {
-        var req = request as! FCGIRequest
+        var req = request
         // TODO: Future - when Swift gets exception handling, wrap this
         // TODO: Refactor this into a separate method
         for handler in registeredPreware {
-            req = handler(request) as! FCGIRequest  // Because we can't correctly force compiler type checking without generic typealiases
+            req = handler(request)  // Because we can't correctly force compiler type checking without generic typealiases
         }
         
         if let requestHandler = requestRouter.route(req.path) {
@@ -131,9 +139,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate, ParserDelegate {
                     response = handler(req, response)
                 }
                 
-                if let responseData = response.responseData {
-                    req.writeResponseData(responseData, toStream: FCGIOutputStream.Stdout)
-                }
+                backend.sendResponse(req, response: response)
                 
                 req.finish(.Complete)
                 
@@ -150,7 +156,7 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate, ParserDelegate {
         }
         
         if let sock = request.socket {
-            parser.socketDisconnect(sock)
+            backend.cleanUp(sock)
         }
     }
 }

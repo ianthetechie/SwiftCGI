@@ -1,4 +1,4 @@
-module CHttpParser {
+module CHTTPParser {
     explicit module Parser {
         header "./http-parser/http_parser.h"
         export *

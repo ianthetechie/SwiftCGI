@@ -2,31 +2,38 @@
 //  HTTPParser.swift
 //  SwiftCGI
 //
-//  Created by Todd Bluhm on 9/21/15.
+//  Created by Todd Bluhm on 9/26/15.
 //  Copyright © 2015 Ian Wagner. All rights reserved.
 //
 
-import Foundation
-import CHttpParser.Parser
-import CHttpParser.Accessors
+import CHTTPParser.Parser
+import CHTTPParser.Accessors
 
-struct HTTPParserRequest {
+struct HttpParserRequest {
     var method: String?
     var body: String?
     var url: String?
-    var status: Int?
     var headers: [String:String]?
     var lastHeaderWasValue = true
     var isMessageComplete = false
     var headerName: String?
+    var completeMethod: (() -> ())?
 }
 
-class HTTPParser: Parser {
-    let endOfLine = "\r\n".dataUsingEncoding(NSUTF8StringEncoding)
-    var settings: http_parser_settings
+func ==(lhs: HttpParser, rhs: HttpParser) -> Bool {
+    return lhs.hashValue == rhs.hashValue
+}
+
+class HttpParser: Hashable {
     var parser = http_parser()
-    var data = HTTPParserRequest()
-    var delegate: ParserDelegate?
+    var data = HttpParserRequest()
+    var settings: http_parser_settings
+    var hashValue: Int {
+        get {
+            return "\(parser)".hashValue
+        }
+    }
+    var delegate: HTTPBackend?
     
     init() {
         settings = http_parser_settings(
@@ -42,37 +49,33 @@ class HTTPParser: Parser {
             on_chunk_complete: nil
         )
         
-        withUnsafeMutablePointer(&data) { (data: UnsafeMutablePointer<HTTPParserRequest>) -> Void in
+        data.completeMethod = requestComplete
+        
+        withUnsafeMutablePointer(&data) { (data: UnsafeMutablePointer<HttpParserRequest>) -> Void in
             parser.data = UnsafeMutablePointer<Void>(data)
             http_parser_init(&parser, HTTP_REQUEST)
         }
     }
     
-    func parseData(sock: GCDAsyncSocket, data: NSData, tag: Int) {
+    func requestComplete () {
+        delegate?.finishedRequestConstruction(self)
+    }
+    
+    func parseData(data: NSData) {
         http_parser_execute(&parser, &settings, UnsafePointer<Int8>(data.bytes), data.length)
-        resumeSocketReading(sock)
-    }
-    
-    func resumeSocketReading(sock: GCDAsyncSocket) {
-        sock.readDataToData(endOfLine, withTimeout: 1000, tag: 0)
-    }
-    
-    func socketDisconnect(sock: GCDAsyncSocket) {
-        sock.disconnect()
     }
 }
 
 func onMessageComplete(parser: UnsafeMutablePointer<http_parser>) -> Int32 {
-    let dataPtr = UnsafeMutablePointer<HTTPParserRequest>(parser.memory.data)
+    let dataPtr = UnsafeMutablePointer<HttpParserRequest>(parser.memory.data)
     dataPtr.memory.isMessageComplete = true
-    dataPtr.memory.status = Int(http_parser_get_status_code(parser))
     dataPtr.memory.method = String.fromCString(http_parser_get_method(parser))
-    print(dataPtr.memory)
+    dataPtr.memory.completeMethod?()
     return 0
 }
 
 func onReceivedHeaderName(parser: UnsafeMutablePointer<http_parser>, data: UnsafePointer<Int8>, length: Int) -> Int32 {
-    let dataPtr = UnsafeMutablePointer<HTTPParserRequest>(parser.memory.data)
+    let dataPtr = UnsafeMutablePointer<HttpParserRequest>(parser.memory.data)
     
     if dataPtr.memory.headerName == nil {
         dataPtr.memory.headerName = ""
@@ -102,7 +105,7 @@ func onReceivedHeaderName(parser: UnsafeMutablePointer<http_parser>, data: Unsaf
 }
 
 func onReceivedHeaderValue(parser: UnsafeMutablePointer<http_parser>, data: UnsafePointer<Int8>, length: Int) -> Int32 {
-    let dataPtr = UnsafeMutablePointer<HTTPParserRequest>(parser.memory.data)
+    let dataPtr = UnsafeMutablePointer<HttpParserRequest>(parser.memory.data)
     
     if dataPtr.memory.headers == nil {
         dataPtr.memory.headers = [:]
@@ -120,7 +123,7 @@ func onReceivedHeaderValue(parser: UnsafeMutablePointer<http_parser>, data: Unsa
             // we need to add this data as the start header value
             if !dataPtr.memory.lastHeaderWasValue {
                 dataPtr.memory.headers![headerName] = newPiece[start...end]
-            // otherwise lets append on to the previous header value
+                // otherwise lets append on to the previous header value
             } else {
                 if let partialValue = dataPtr.memory.headers![headerName] {
                     dataPtr.memory.headers![headerName] = partialValue + newPiece[start...end]
@@ -129,13 +132,13 @@ func onReceivedHeaderValue(parser: UnsafeMutablePointer<http_parser>, data: Unsa
             
             dataPtr.memory.lastHeaderWasValue = true
     }
-
+    
     
     return 0
 }
 
 func onReceivedUrl(parser: UnsafeMutablePointer<http_parser>, data: UnsafePointer<Int8>, length: Int) -> Int32 {
-    let dataPtr = UnsafeMutablePointer<HTTPParserRequest>(parser.memory.data)
+    let dataPtr = UnsafeMutablePointer<HttpParserRequest>(parser.memory.data)
     
     if dataPtr.memory.url == nil {
         dataPtr.memory.url = ""
@@ -155,7 +158,7 @@ func onReceivedUrl(parser: UnsafeMutablePointer<http_parser>, data: UnsafePointe
 }
 
 func onReceivedBody(parser: UnsafeMutablePointer<http_parser>, data: UnsafePointer<Int8>, length: Int) -> Int32 {
-    let dataPtr = UnsafeMutablePointer<HTTPParserRequest>(parser.memory.data)
+    let dataPtr = UnsafeMutablePointer<HttpParserRequest>(parser.memory.data)
     
     if dataPtr.memory.body == nil {
         dataPtr.memory.body = ""
