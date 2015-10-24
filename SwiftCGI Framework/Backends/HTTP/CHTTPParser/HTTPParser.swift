@@ -33,7 +33,7 @@ class HttpParser: Hashable {
             return "\(parser)".hashValue
         }
     }
-    var delegate: HTTPBackend?
+    var delegate: EmbeddedHTTPBackend?
     
     init() {
         settings = http_parser_settings(

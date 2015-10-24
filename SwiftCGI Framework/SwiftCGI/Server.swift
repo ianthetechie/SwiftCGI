@@ -53,15 +53,15 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate, BackendDelegate {
     private var registeredMiddleware: [RequestMiddlewareHandler] = []
     private var registeredPostware: [RequestPostwareHandler] = []
     private let backend: Backend
-    private let useHttpServer: Bool
+    private let useEmbeddedHTTPServer: Bool
     
     // MARK: Init
     
-    public init(port: UInt16, requestRouter: Router, useHttpServer: Bool = true) {
-        self.useHttpServer = useHttpServer
+    public init(port: UInt16, requestRouter: Router, useEmbeddedHTTPServer: Bool = true) {
+        self.useEmbeddedHTTPServer = useEmbeddedHTTPServer
         
-        if useHttpServer {
-            backend = HTTPBackend()
+        if useEmbeddedHTTPServer {
+            backend = EmbeddedHTTPBackend()
         } else {
             backend = FCGIBackend()
         }

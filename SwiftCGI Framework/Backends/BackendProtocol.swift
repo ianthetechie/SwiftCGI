@@ -16,10 +16,7 @@ protocol Backend {
     var delegate: BackendDelegate? { get set }
     
     func startReadingFromSocket(sock: GCDAsyncSocket)
-    
     func processData(sock: GCDAsyncSocket, data: NSData, tag: Int)
-    
     func cleanUp(sock: GCDAsyncSocket)
-    
     func sendResponse(request: Request, response: HTTPResponse) -> Bool
 }

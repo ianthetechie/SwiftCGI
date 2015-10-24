@@ -109,8 +109,15 @@ extension FCGIRequest: Request {
     }
     
     public var method: HTTPMethod {
-        get {
-            return HTTPMethod(rawValue: params["REQUEST_METHOD"]!)!
+        guard let requestMethod = params["REQUEST_METHOD"] else {
+            fatalError("No REQUEST_METHOD found in the FCGI request params.")
         }
+        
+        guard let meth = HTTPMethod(rawValue: requestMethod) else {
+            fatalError("Invalid HTTP method specified in REQUEST_METHOD.")
+        }
+        
+        return meth
     }
+    
 }

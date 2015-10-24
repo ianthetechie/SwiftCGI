@@ -31,6 +31,8 @@
 
 // MARK: Record classes
 
+// TODO: Consider changing these from classes to structs
+
 // Base struct (should never be directly instantiated)
 class FCGIRecord {
     let version: FCGIVersion

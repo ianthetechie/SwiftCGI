@@ -21,7 +21,7 @@ import Foundation
 //    func finish(status: RequestCompletionStatus)
 //}
 
-class HTTPRequest {
+struct HTTPRequest {
     var cookies: [String: String]? = [:]
     var streamData: NSMutableData?
     var socket: GCDAsyncSocket?

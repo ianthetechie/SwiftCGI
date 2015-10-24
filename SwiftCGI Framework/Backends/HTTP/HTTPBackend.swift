@@ -10,7 +10,10 @@ import Foundation
 
 extension Dictionary where Value : Equatable {
     func allKeysForValue(val : Value) -> [Key] {
-        return self.filter { $1 == val }.map { $0.0 }
+//        return self.filter { $1 == val }.map { $0.0 }
+        return self.flatMap({ (key, value) -> Key? in
+            return value == val ? key : nil
+        })
     }
 }
 
@@ -20,11 +23,11 @@ enum RequestProcess: Int {
     case Finished = 2
 }
 
-protocol HTTPBackendDelegate {
+protocol EmbeddedHTTPBackendDelegate {
     func finishedRequestConstruction(parser: HttpParser)
 }
 
-class HTTPBackend {
+class EmbeddedHTTPBackend {
     let readSize: UInt = 65536
     let endOfLine: NSData = "\r\n".dataUsingEncoding(NSUTF8StringEncoding)!
     var delegate: BackendDelegate?
@@ -33,7 +36,7 @@ class HTTPBackend {
     init() {}
 }
 
-extension HTTPBackend: Backend {
+extension EmbeddedHTTPBackend: Backend {
     func processData(sock: GCDAsyncSocket, data: NSData, tag: Int) {
         if let parser = currentRequests[sock] {
             parser.parseData(data)
@@ -71,7 +74,7 @@ extension HTTPBackend: Backend {
         let remainingData = data.mutableCopy() as! NSMutableData
         while remainingData.length > 0 {
             let chunk = remainingData.subdataWithRange(NSMakeRange(0, min(remainingData.length, 65535)))
-            print(chunk)
+//            print(chunk)
             sock.writeData(chunk, withTimeout: 1000, tag: 0)
             
             // Remove the data we just sent from the buffer
@@ -82,9 +85,11 @@ extension HTTPBackend: Backend {
     }
 }
 
-extension HTTPBackend: HTTPBackendDelegate {
+extension EmbeddedHTTPBackend: EmbeddedHTTPBackendDelegate {
     func finishedRequestConstruction(parser: HttpParser) {
-        let req = HTTPRequest(pRequest: parser.data)
+        var req = HTTPRequest(pRequest: parser.data)
+        
+        // FIXME: What is this abomination?!
         guard let sock = currentRequests.allKeysForValue(parser).first else {
             fatalError("Could not find associated socket")
         }

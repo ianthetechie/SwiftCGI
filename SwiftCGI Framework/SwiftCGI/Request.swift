@@ -13,11 +13,14 @@ public enum RequestCompletionStatus {
 }
 
 public enum HTTPMethod: String {
+    case OPTIONS = "OPTIONS"
     case GET = "GET"
+    case HEAD = "HEAD"
     case POST = "POST"
     case PUT = "PUT"
     case DELETE = "DELETE"
-    case HEAD = "HEAD"
+    case TRACE = "TRACE"
+    case CONNECT = "CONNECT"
 }
 
 public protocol Request {
