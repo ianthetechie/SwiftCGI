@@ -1,0 +1,11 @@
+module CHTTPParser {
+    explicit module Parser {
+        header "./http-parser/http_parser.h"
+        export *
+    }
+    
+    explicit module Accessors {
+        header "./http_parser_accessors.h"
+        export *
+    }
+}

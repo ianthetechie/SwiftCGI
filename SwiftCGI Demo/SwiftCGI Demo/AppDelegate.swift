@@ -49,7 +49,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let blogRouter = Router(path: "blog", handleWildcardChildren: true, withHandler: blogRootHandler)
         rootRouter.attachRouter(blogRouter)
         
-        server = FCGIServer(port: 9000, requestRouter: rootRouter)
+        server = FCGIServer(port: 9000, requestRouter: rootRouter, useHttpServer: true)
         
         // Set up middleware
         server.registerMiddlewareHandler(sessionMiddlewareHandler)
