@@ -48,6 +48,8 @@ struct HTTPRequest {
             self.headers = headers
         }
         
+        // TODO: Load cookies
+        
         // Get the Request body if one exits
         if let bodyData = pRequest.body?.dataUsingEncoding(NSUTF8StringEncoding) {
             streamData = NSMutableData(data: bodyData)
