@@ -26,6 +26,8 @@ public class Router {
     
     public func route(path: String) -> RequestHandler? {
         // TODO: Seems a bit kludgey... Functional, but kludgey...
+        
+        // Ignore stray slashes
         let components = (path as NSString).pathComponents.filter { return $0 != "/" }
         
         if components.count > 0 {

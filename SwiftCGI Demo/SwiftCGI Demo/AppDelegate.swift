@@ -44,7 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // TODO: Clean up this kludge
         // NOTE: You should change the root path to match your server configuration
-        let rootRouter = Router(path: "cgi", handleWildcardChildren: true, withHandler: rootHandler)
+        let rootRouter = Router(path: "cgi", handleWildcardChildren: false, withHandler: rootHandler)
         
         let blogRouter = Router(path: "blog", handleWildcardChildren: true, withHandler: blogRootHandler)
         rootRouter.attachRouter(blogRouter)

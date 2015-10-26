@@ -41,7 +41,11 @@ public class FCGIServer: NSObject {
     public var requestRouter: Router
 //    public var requestHandler: FCGIRequestHandler
     
-    let delegateQueue: dispatch_queue_t
+    public var http404Handler: RequestHandler = { (request) -> HTTPResponse? in
+        return HTTPResponse(status: .NotFound, contentType: .TextPlain, body: "HTTP 404 - This isn't the page you're looking for...")
+    }
+    
+    private let delegateQueue: dispatch_queue_t
     private lazy var listener: GCDAsyncSocket = {
         GCDAsyncSocket(delegate: self, delegateQueue: self.delegateQueue)
     }()
@@ -125,7 +129,7 @@ extension FCGIServer: GCDAsyncSocketDelegate {
 }
 
 extension FCGIServer: BackendDelegate {
-    // When out backend has built a full request, it sends it to us to process
+    // When our backend has parsed a full request, it sends it here for processing
     func finishedParsingRequest(request: Request) {
         var req = request
         // TODO: Future - when Swift gets exception handling, wrap this
@@ -142,18 +146,38 @@ extension FCGIServer: BackendDelegate {
                 
                 backend.sendResponse(req, response: response)
                 
+                for handler in registeredPostware {
+                    handler(req, response)
+                }
+                
                 req.finish(.Complete)
+            } else {
+                // TODO: Figure out how this should be handled
+                
+//                backend.sendResponse(req, response: response)
+                
+                for handler in registeredPostware {
+                    handler(req, nil)
+                }
+                
+                req.finish(.Complete)
+            }
+        } else {
+            // Invoke the overrideable HTTP 404 handler
+            if let response = http404Handler(req) {
+                backend.sendResponse(req, response: response)
                 
                 for handler in registeredPostware {
                     handler(req, response)
                 }
             } else {
-                req.finish(.Complete)
-                
+                // Invoke postware anyways, but with a nil argument
                 for handler in registeredPostware {
                     handler(req, nil)
                 }
             }
+            
+            req.finish(.Complete)
         }
         
         if let sock = request.socket {
