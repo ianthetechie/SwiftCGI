@@ -24,14 +24,14 @@ enum RequestProcess: Int {
 }
 
 protocol EmbeddedHTTPBackendDelegate {
-    func finishedRequestConstruction(parser: HttpParser)
+    func finishedRequestConstruction(parser: HTTPParser)
 }
 
 class EmbeddedHTTPBackend {
     let readSize: UInt = 65536
     let endOfLine: NSData = "\r\n".dataUsingEncoding(NSUTF8StringEncoding)!
     var delegate: BackendDelegate?
-    var currentRequests: [GCDAsyncSocket: HttpParser] = [:]
+    var currentRequests: [GCDAsyncSocket: HTTPParser] = [:]
     
     init() {}
 }
@@ -46,7 +46,7 @@ extension EmbeddedHTTPBackend: Backend {
     
     func startReadingFromSocket(sock: GCDAsyncSocket) {
         // Create a new parser and request data storage
-        let newParser = HttpParser()
+        let newParser = HTTPParser()
         newParser.delegate = self
         currentRequests[sock] = newParser
         sock.readDataToData(endOfLine, withTimeout: 1000, tag: RequestProcess.Started.rawValue)
@@ -86,7 +86,7 @@ extension EmbeddedHTTPBackend: Backend {
 }
 
 extension EmbeddedHTTPBackend: EmbeddedHTTPBackendDelegate {
-    func finishedRequestConstruction(parser: HttpParser) {
+    func finishedRequestConstruction(parser: HTTPParser) {
         var req = HTTPRequest(pRequest: parser.data)
         
         // FIXME: What is this abomination?!

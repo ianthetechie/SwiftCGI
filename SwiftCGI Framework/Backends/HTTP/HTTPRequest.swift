@@ -30,9 +30,13 @@ struct HTTPRequest {
     let params: RequestParams
     var headers: [String: String]?
     
-    init(pRequest: HttpParserRequest) {
+    init(pRequest: HTTPParserRequest) {
         // Get the Request Method
-        guard let method = HTTPMethod(rawValue: pRequest.method!) else {
+        guard let pRequestMethod = pRequest.method else {
+            fatalError("HttpParserRequest has no method.")
+        }
+        
+        guard let method = HTTPMethod(rawValue: pRequestMethod) else {
             fatalError("Could not parse out the HTTP request method")
         }
         self.method = method

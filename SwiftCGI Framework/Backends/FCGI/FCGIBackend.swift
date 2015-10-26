@@ -29,7 +29,11 @@ class FCGIBackend {
         // we have covered all cases
         switch record.type {
         case .BeginRequest:
-            let request = FCGIRequest(record: record as! BeginRequestRecord)
+            guard let record = record as? BeginRequestRecord else {
+                fatalError("Invalid record type.")
+            }
+            
+            let request = FCGIRequest(record: record)
             request.socket = socket
             
             currentRequests[globalRequestID] = request
@@ -39,7 +43,11 @@ class FCGIBackend {
             let maybeRequest = currentRequests[globalRequestID]
             
             if let request = maybeRequest {
-                if let params = (record as! ParamsRecord).params {
+                guard let record = record as? ParamsRecord else {
+                    fatalError("Invalid record type.")
+                }
+                
+                if let params = record.params {
                     if request._params == nil {
                         request._params = [:]
                     }
@@ -62,7 +70,11 @@ class FCGIBackend {
                     request.streamData = NSMutableData(capacity: 65536)
                 }
                 
-                if let recordData = (record as! ByteStreamRecord).rawData {
+                guard let record = record as? ByteStreamRecord else {
+                    fatalError("Invalid record type.")
+                }
+                
+                if let recordData = record.rawData {
                     request.streamData!.appendData(recordData)
                 } else {
                     delegate?.finishedParsingRequest(request)

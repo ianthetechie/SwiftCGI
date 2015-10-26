@@ -34,7 +34,7 @@
 // NOTE: This class muse inherit from NSObject; otherwise the Obj-C code for
 // GCDAsyncSocket will somehow not be able to store a reference to the delegate
 // (it will remain nil and no error will be logged).
-public class FCGIServer: NSObject, GCDAsyncSocketDelegate, BackendDelegate {
+public class FCGIServer: NSObject {
     // MARK: Properties
     
     public let port: UInt16
@@ -95,10 +95,9 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate, BackendDelegate {
     public func registerPostwareHandler(handler: RequestPostwareHandler) -> Void {
         registeredPostware.append(handler)
     }
-    
-    
-    // MARK: GCDAsyncSocketDelegate methods
-    
+}
+
+extension FCGIServer: GCDAsyncSocketDelegate {
     public func socket(sock: GCDAsyncSocket!, didAcceptNewSocket newSocket: GCDAsyncSocket!) {
         activeSockets.insert(newSocket)
         
@@ -123,7 +122,9 @@ public class FCGIServer: NSObject, GCDAsyncSocketDelegate, BackendDelegate {
         // Tell the backend the socket has send us some data, please process it
         backend.processData(sock, data: data, tag: tag)
     }
-    
+}
+
+extension FCGIServer: BackendDelegate {
     // When out backend has built a full request, it sends it to us to process
     func finishedParsingRequest(request: Request) {
         var req = request
