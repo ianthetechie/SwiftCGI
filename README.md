@@ -34,8 +34,8 @@ I would currently classify SwiftCGI as late alpha in that it is a funcitonal bas
 change somewhat over the next few months (not quite as fast as Swift has been changing, but not quite as stable as
 the C++ spec). NOTE: The current server has the same limitations of FCGIKit, which will be remedied in the future.
 
-The project and demos are currently Swift 2.0 compatible, but not everything has been updated to capture the true
-spirit of Swift 2.0. This is in the works.
+SwiftCGI currently Swift 2.1 compatible, but a few things haven't been fully updated to capture the true
+spirit of Swift 2. This is in the works.
 
 ## Credits
 I'm not sure I'd say this project was "inspired" by [FCGIKit](https://github.com/fervo/FCGIKit), but the core of this
