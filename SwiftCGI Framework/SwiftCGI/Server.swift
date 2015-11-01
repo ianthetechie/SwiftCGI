@@ -42,7 +42,7 @@ public class FCGIServer: NSObject {
 //    public var requestHandler: FCGIRequestHandler
     
     public var http404Handler: RequestHandler = { (request) -> HTTPResponse? in
-        return HTTPResponse(status: .NotFound, contentType: .TextPlain, body: "HTTP 404 - This isn't the page you're looking for...")
+        return HTTPResponse(status: .NotFound, contentType: .TextPlain(.UTF8), body: "HTTP 404 - This isn't the page you're looking for...")
     }
     
     private let delegateQueue: dispatch_queue_t
@@ -132,6 +132,7 @@ extension FCGIServer: BackendDelegate {
     // When our backend has parsed a full request, it sends it here for processing
     func finishedParsingRequest(request: Request) {
         var req = request
+        
         // TODO: Future - when Swift gets exception handling, wrap this
         // TODO: Refactor this into a separate method
         for handler in registeredPreware {

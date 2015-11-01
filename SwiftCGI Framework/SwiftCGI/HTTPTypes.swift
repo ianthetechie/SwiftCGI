@@ -12,6 +12,24 @@ let HTTPNewline = "\r\n"
 let HTTPTerminator = "\r\n\r\n"
 
 
+// MARK: Simple enumerations
+
+public enum HTTPMethod: String {
+    case OPTIONS = "OPTIONS"
+    case GET = "GET"
+    case HEAD = "HEAD"
+    case POST = "POST"
+    case PUT = "PUT"
+    case DELETE = "DELETE"
+    case TRACE = "TRACE"
+    case CONNECT = "CONNECT"
+}
+
+public enum Charset: String {
+    case UTF8 = "utf-8"
+}
+
+
 // MARK: Status codes
 
 public typealias HTTPStatusCode = Int
@@ -252,15 +270,34 @@ public enum HTTPResponseHeader: HTTPHeader {
     public var serializedValue: String {
         switch self {
         case .ContentLength(let length): return length.description
-        case .ContentType(let contentType): return "\(contentType.rawValue); charset=utf-8" // TODO: FUTURE - would we ever want to allow another content type? If so, how? All data is converted to UTF-8 in the current architecture, so it makes sense to hardcode it right now.
+        case .ContentType(let contentType): return contentType.serializedValue
         case .SetCookie(let cookies): return cookies.map({ (key, value) in "\(key)=\(value)" }).joinWithSeparator("\(HTTPNewline)\(self.key): ")
         }
     }
 }
 
 
-public enum HTTPContentType: String {
-    case TextHTML = "text/html"
-    case TextPlain = "text/plain"
-    case ApplicationJSON = "application/json"
+// Note to future self and anyone else reading this code: additional types of generated data should
+// be included here. If someone (including my future self) thinks of a good reason to include types
+// such as video/mp4 that are typically used for static files, then there should be a VERY good use
+// case for it. Web application frameworks are designed for dynamic response generation, not serving
+// static files. nginx is perfectly good at that already. Notable exceptions to the "no static file
+// types" rule are images, which have many valid dynamic generation use cases (QR codes, barcodes,
+// transformations on uploaded files, etc).
+public enum HTTPContentType {
+    case TextHTML(Charset)
+    case TextPlain(Charset)
+    case ApplicationJSON
+    case ImagePNG
+    case ImageJPEG
+    
+    public var serializedValue: String {
+        switch self {
+        case .TextHTML(let charset): return "text/html; charset=\(charset.rawValue)"
+        case .TextPlain(let charset): return "text/plain; charset=\(charset.rawValue)"
+        case .ApplicationJSON: return "application/json"
+        case .ImagePNG: return "image/png"
+        case .ImageJPEG: return "image/jpeg"
+        }
+    }
 }

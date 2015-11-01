@@ -62,7 +62,21 @@ public struct HTTPResponse {
     }
     public var responseData: NSData? {
         let responseString = headerString + body as NSString
-        return responseString.dataUsingEncoding(NSUTF8StringEncoding)
+        let responseData: NSData?
+        switch contentType {
+        case .ApplicationJSON:
+            fallthrough
+        case .ImagePNG:
+            fallthrough
+        case .ImageJPEG:
+            fallthrough
+        case .TextHTML(.UTF8):
+            fallthrough
+        case .TextPlain(.UTF8):
+            responseData = responseString.dataUsingEncoding(NSUTF8StringEncoding)
+        }
+        
+        return responseData
     }
     
     
@@ -74,11 +88,12 @@ public struct HTTPResponse {
         self.body = body
     }
     
-    // NOTE: The current Swift compiler doesn't allow convenience initializers
-    // on structs, so the other initializer is not called
+    /// Creates an HTTPResponse assuming a `Content-Type` of `text/plain` encoded as UTF-8.
     public init(body: String) {
+        // NOTE: The current Swift compiler doesn't allow convenience initializers
+        // on structs, so the other initializer is not called
         status = .OK
-        contentType = .TextHTML
+        contentType = .TextPlain(.UTF8)
         self.body = body
     }
     

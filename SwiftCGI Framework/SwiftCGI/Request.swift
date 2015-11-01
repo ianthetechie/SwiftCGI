@@ -12,17 +12,6 @@ public enum RequestCompletionStatus {
     case Complete
 }
 
-public enum HTTPMethod: String {
-    case OPTIONS = "OPTIONS"
-    case GET = "GET"
-    case HEAD = "HEAD"
-    case POST = "POST"
-    case PUT = "PUT"
-    case DELETE = "DELETE"
-    case TRACE = "TRACE"
-    case CONNECT = "CONNECT"
-}
-
 public protocol Request {
     var cookies: [String: String]? { get set }
     var params: RequestParams { get }   /// Used to store things like CGI environment variables
