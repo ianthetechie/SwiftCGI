@@ -29,7 +29,7 @@ protocol EmbeddedHTTPBackendDelegate {
 
 class EmbeddedHTTPBackend {
     let readSize: UInt = 65536
-    let endOfLine: NSData = "\r\n".dataUsingEncoding(NSUTF8StringEncoding)! // TODO: Are we sure we can encode this in UTF-8?
+    let endOfLine: NSData = "\r\n".dataUsingEncoding(NSUTF8StringEncoding)! // TODO: Are we sure we should encode this in UTF-8? What if the response is a different charset?
     var delegate: BackendDelegate?
     var currentRequests: [GCDAsyncSocket: HTTPParser] = [:]
     
