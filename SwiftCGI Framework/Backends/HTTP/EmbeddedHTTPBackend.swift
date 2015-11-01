@@ -1,5 +1,5 @@
 //
-//  HTTPBackend.swift
+//  EmbeddedHTTPBackend.swift
 //  SwiftCGI
 //
 //  Created by Todd Bluhm on 9/21/15.
@@ -29,7 +29,7 @@ protocol EmbeddedHTTPBackendDelegate {
 
 class EmbeddedHTTPBackend {
     let readSize: UInt = 65536
-    let endOfLine: NSData = "\r\n".dataUsingEncoding(NSUTF8StringEncoding)!
+    let endOfLine: NSData = "\r\n".dataUsingEncoding(NSUTF8StringEncoding)! // TODO: Are we sure we can encode this in UTF-8?
     var delegate: BackendDelegate?
     var currentRequests: [GCDAsyncSocket: HTTPParser] = [:]
     
@@ -87,7 +87,7 @@ extension EmbeddedHTTPBackend: Backend {
 
 extension EmbeddedHTTPBackend: EmbeddedHTTPBackendDelegate {
     func finishedRequestConstruction(parser: HTTPParser) {
-        var req = HTTPRequest(pRequest: parser.data)
+        var req = EmbeddedHTTPRequest(pRequest: parser.data)
         
         // FIXME: What is this abomination?!
         guard let sock = currentRequests.allKeysForValue(parser).first else {

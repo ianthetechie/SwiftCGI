@@ -121,6 +121,7 @@ func onReceivedHeaderValue(parser: UnsafeMutablePointer<http_parser>, data: Unsa
             
             // If the last piece of data recieved was not a head value then
             // we need to add this data as the start header value
+            // TODO: Improve the safety of this code; all those forced unwraps look rather evil
             if !dataPtr.memory.lastHeaderWasValue {
                 dataPtr.memory.headers![headerName] = newPiece[start...end]
                 // otherwise lets append on to the previous header value

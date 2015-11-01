@@ -1,5 +1,5 @@
 //
-//  HTTPRequest.swift
+//  EmbeddedHTTPRequest.swift
 //  SwiftCGI
 //
 //  Created by Todd Bluhm on 9/23/15.
@@ -8,20 +8,8 @@
 
 import Foundation
 
-//public protocol Request {
-//    var cookies: [String: String]? { get set }
-//    var params: RequestParams { get }   /// Used to store things like CGI environment variables
-//    var path: String { get }
-//    var streamData: NSMutableData? { get set }
-//    var socket: GCDAsyncSocket? { get set }
-//    var method: HTTPMethod { get }
-//    // TODO: Add in a real type for Request Headers
-//    var headers: [String: String] { get }
-//    
-//    func finish(status: RequestCompletionStatus)
-//}
 
-struct HTTPRequest {
+struct EmbeddedHTTPRequest {
     var cookies: [String: String]? = [:]
     var streamData: NSMutableData?
     var socket: GCDAsyncSocket?
@@ -63,7 +51,7 @@ struct HTTPRequest {
     }
 }
 
-extension HTTPRequest: Request {
+extension EmbeddedHTTPRequest: Request {
     func finish(status: RequestCompletionStatus) {
         switch status {
         case .Complete:

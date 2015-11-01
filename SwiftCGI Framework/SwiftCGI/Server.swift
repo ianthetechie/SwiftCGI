@@ -134,7 +134,6 @@ extension FCGIServer: BackendDelegate {
         var req = request
         
         // TODO: Future - when Swift gets exception handling, wrap this
-        // TODO: Refactor this into a separate method
         for handler in registeredPreware {
             req = handler(request)  // Because we can't correctly force compiler type checking without generic typealiases
         }
