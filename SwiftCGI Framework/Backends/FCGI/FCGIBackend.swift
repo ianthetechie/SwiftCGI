@@ -10,14 +10,14 @@ import Foundation
 
 class FCGIBackend {
     private var currentRequests: [String: FCGIRequest] = [:]
-    private var recordContext: [GCDAsyncSocket: FCGIRecord] = [:]
+    private var recordContext: [GCDAsyncSocket: FCGIRecordType] = [:]
     internal var paramsAvailableHandler: (Request -> Void)?
     private let defaultSendStream = FCGIOutputStream.Stdout
     var delegate: BackendDelegate?
     
     init() {}
     
-    func handleRecord(record: FCGIRecord, fromSocket socket: GCDAsyncSocket) {
+    func handleRecord(record: FCGIRecordType, fromSocket socket: GCDAsyncSocket) {
         let globalRequestID = "\(record.requestID)-\(socket.connectedPort)"
         
         // TODO: Guards to handle early exits in odd cases like malformed data; I don't like all of
@@ -27,7 +27,7 @@ class FCGIBackend {
         // subclass. This allows for a much cleaner chunk of code than a handful
         // of if/else ifs chained together, and allows the compiler to check that
         // we have covered all cases
-        switch record.type {
+        switch record.kind {
         case .BeginRequest:
             guard let record = record as? BeginRequestRecord else {
                 fatalError("Invalid record type.")
@@ -118,7 +118,7 @@ extension FCGIBackend: Backend {
                     sock.disconnect()
                 }
             case .AwaitingContentAndPaddingTag:
-                if let record = recordContext[sock] {
+                if var record = recordContext[sock] {
                     record.processContentData(data)
                     handleRecord(record, fromSocket: sock)
                 } else {
@@ -146,7 +146,7 @@ extension FCGIBackend: Backend {
             return false
         }
         
-        guard let streamType = FCGIRecordType(rawValue: defaultSendStream.rawValue) else {
+        guard let streamType = FCGIRecordKind(rawValue: defaultSendStream.rawValue) else {
             NSLog("ERROR: invalid stream type")
             return false
         }
@@ -159,18 +159,15 @@ extension FCGIBackend: Backend {
         let remainingData = data.mutableCopy() as! NSMutableData
         while remainingData.length > 0 {
             let chunk = remainingData.subdataWithRange(NSMakeRange(0, min(remainingData.length, 65535)))
-            let outRecord = ByteStreamRecord(version: req.record.version, requestID: req.record.requestID, contentLength: UInt16(chunk.length), paddingLength: 0)
-            outRecord.setRawData(chunk)
+            let outRecord = ByteStreamRecord(version: req.record.version, requestID: req.record.requestID, contentLength: UInt16(chunk.length), paddingLength: 0, kind: streamType, rawData: chunk)
             
-            outRecord.type = streamType
             sock.writeData(outRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
             
             // Remove the data we just sent from the buffer
             remainingData.replaceBytesInRange(NSMakeRange(0, chunk.length), withBytes: nil, length: 0)
         }
         
-        let termRecord = ByteStreamRecord(version: req.record.version, requestID: req.record.requestID, contentLength: 0, paddingLength: 0)
-        termRecord.type = streamType
+        let termRecord = ByteStreamRecord(version: req.record.version, requestID: req.record.requestID, contentLength: 0, paddingLength: 0, kind: streamType)
         sock.writeData(termRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
         
         return true

@@ -58,7 +58,7 @@ class RecordTests: XCTestCase {
     func testBeginRequestRecord() {
         let record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
         verifyBasicInfoAndHeaderForRecord(record)
-        XCTAssertEqual(record.type, FCGIRecordType.BeginRequest, "Incorrect record type")
+        XCTAssertEqual(record.type, .BeginRequest, "Incorrect record type")
         
         XCTAssertEqual(record.fcgiPacketData.length, 8, "Incorrect packet data length")
         
@@ -83,7 +83,7 @@ class RecordTests: XCTestCase {
         let record = EndRequestRecord(version: .Version1, requestID: 1, paddingLength: 0, protocolStatus: .RequestComplete, applicationStatus: 0)
         
         verifyBasicInfoAndHeaderForRecord(record)
-        XCTAssertEqual(record.type, FCGIRecordType.EndRequest, "Incorrect record type")
+        XCTAssertEqual(record.type, .EndRequest, "Incorrect record type")
         
         let fcgiData = record.fcgiPacketData
         XCTAssertEqual(fcgiData.length, 16, "Incorrect packet data length")
@@ -108,7 +108,7 @@ class RecordTests: XCTestCase {
         let record = ByteStreamRecord(version: .Version1, requestID: 1, contentLength: 0, paddingLength: 0)
         
         verifyBasicInfoAndHeaderForRecord(record)
-        XCTAssertEqual(record.type, FCGIRecordType.Stdin, "Incorrect record type")
+        XCTAssertEqual(record.type, .Stdin, "Incorrect record type")
         
         XCTAssertEqual(record.fcgiPacketData.length, 8, "Incorrect packet data length (before processContentData)")
         

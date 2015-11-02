@@ -29,33 +29,25 @@
 //
 
 
-// MARK: Record classes
+// MARK: Record types
 
-// TODO: Consider changing these from classes to structs
+protocol FCGIRecordType {
+    var version: FCGIVersion { get }
+    var requestID: FCGIRequestID { get }
+    
+    var contentLength: FCGIContentLength { get }
+    var paddingLength: FCGIPaddingLength { get }
+    
+    var kind: FCGIRecordKind { get }
+    
+    mutating func processContentData(data: NSData)
+}
 
-// Base struct (should never be directly instantiated)
-class FCGIRecord {
-    let version: FCGIVersion
-    let requestID: FCGIRequestID
-    
-    // A public getter exposes the private constant storage because certain types
-    // of record subclasses are used for incoming data (in which the content length
-    // is known at instantiation), and others compute content length before
-    // sending a packet.
-    //
-    // NOTE: The total data length = contentLenth + paddingLength. Padding
-    // is extra data that is ignored.
-    let _initContentLength: FCGIContentLength
-    var contentLength: FCGIContentLength { return _initContentLength }
-    
-    let paddingLength: FCGIPaddingLength
-    
-    var type: FCGIRecordType { fatalError("Not Implemented") }
-    
+extension FCGIRecordType {
     var fcgiPacketData: NSData {
         var bytes = [UInt8](count: 8, repeatedValue: 0)
         bytes[0] = version.rawValue
-        bytes[1] = UInt8(type.rawValue)
+        bytes[1] = UInt8(kind.rawValue)
         
         let (msb, lsb) = requestID.decomposeBigEndian()
         bytes[2] = msb
@@ -69,28 +61,22 @@ class FCGIRecord {
         
         return NSData(bytes: &bytes, length: 8)
     }
-    
-    init(version: FCGIVersion, requestID: FCGIRequestID, contentLength: FCGIContentLength, paddingLength: FCGIPaddingLength) {
-        self.version = version
-        self.requestID = requestID
-        self._initContentLength = contentLength
-        self.paddingLength = paddingLength
-    }
-    
-    // TODO: Not sure if I like this approach of self-modifying objects...
-    func processContentData(data: NSData) {
-        fatalError("Not Implemented")
-    }
 }
 
 // Begin request record
-class BeginRequestRecord: FCGIRecord {
+struct BeginRequestRecord: FCGIRecordType {
+    let version: FCGIVersion
+    let requestID: FCGIRequestID
+    
+    private(set) var contentLength: FCGIContentLength
+    let paddingLength: FCGIPaddingLength
+    
     var role: FCGIRequestRole?
     var flags: FCGIRequestFlags?
     
-    override var type: FCGIRecordType { return .BeginRequest }
+    let kind: FCGIRecordKind = .BeginRequest
     
-    override func processContentData(data: NSData) {
+    mutating func processContentData(data: NSData) {
         let rawRole = readUInt16FromBigEndianData(data, atIndex: 0)
         
         if let concreteRole = FCGIRequestRole(rawValue: rawRole) {
@@ -101,25 +87,41 @@ class BeginRequestRecord: FCGIRecord {
             flags = FCGIRequestFlags(rawValue: rawFlags)
         }
     }
+    
+    init(version: FCGIVersion, requestID: FCGIRequestID, contentLength: FCGIContentLength, paddingLength: FCGIPaddingLength) {
+        self.version = version
+        self.requestID = requestID
+        self.contentLength = contentLength
+        self.paddingLength = paddingLength
+    }
 }
 
 // End request record
-class EndRequestRecord: FCGIRecord {
+struct EndRequestRecord: FCGIRecordType {
+    let version: FCGIVersion
+    let requestID: FCGIRequestID
+    
+    let contentLength: FCGIContentLength = 8    // Fixed value for this type
+    let paddingLength: FCGIPaddingLength
+    
     let applicationStatus: FCGIApplicationStatus
     let protocolStatus: FCGIProtocolStatus
     
-    override var type: FCGIRecordType { return .EndRequest }
-    override var contentLength: FCGIContentLength { return 8 }  // Fixed value for this type
+    let kind: FCGIRecordKind = .EndRequest
     
     init(version: FCGIVersion, requestID: FCGIRequestID, paddingLength: FCGIPaddingLength, protocolStatus: FCGIProtocolStatus, applicationStatus: FCGIApplicationStatus) {
+        self.version = version
+        self.requestID = requestID
+        self.paddingLength = paddingLength
+        
         self.applicationStatus = applicationStatus
         self.protocolStatus = protocolStatus
-        
-        super.init(version: version, requestID: requestID, contentLength: 0, paddingLength: paddingLength)
     }
     
-    override var fcgiPacketData: NSData {
-        let result = super.fcgiPacketData.mutableCopy() as! NSMutableData
+    var fcgiPacketData: NSData {
+        // Note: because of the cast to the protocol type, this invokes the protocol extension method
+        // implementation, and does not cause an infinite loop.
+        let result = (self as FCGIRecordType).fcgiPacketData.mutableCopy() as! NSMutableData
         
         var extraBytes = [UInt8](count: 8, repeatedValue: 0)
         
@@ -135,55 +137,72 @@ class EndRequestRecord: FCGIRecord {
         
         return result
     }
+    
+    func processContentData(data: NSData) {
+        fatalError("Error: Attempted to call processContentData on an EntRequestRecord.")
+    }
 }
 
 // Data record
-class ByteStreamRecord: FCGIRecord {
-    private var _rawData: NSData?
-    var rawData: NSData? { return _rawData }
+struct ByteStreamRecord: FCGIRecordType {
+    let version: FCGIVersion
+    let requestID: FCGIRequestID
     
-    override var contentLength: FCGIContentLength { return FCGIContentLength(_rawData?.length ?? 0) }
+    private let _initContentLength: FCGIContentLength
+    var contentLength: FCGIContentLength { return FCGIContentLength(rawData?.length ?? 0) }
     
-    var _type: FCGIRecordType = .Stdin
-    override var type: FCGIRecordType {
-        get { return _type }
-        set {
+    let paddingLength: FCGIPaddingLength
+    
+    var rawData: NSData?
+    
+    var kind: FCGIRecordKind = .Stdin {
+        willSet {
             switch newValue {
             case .Stdin, .Stdout, .Stderr:
-                _type = newValue
+                break   // OK
             default:
                 fatalError("ByteStreamRecord.type can only be .Stdin .Stdout or .Stderr")
             }
         }
     }
     
-    override var fcgiPacketData: NSData {
-        let result = super.fcgiPacketData.mutableCopy() as! NSMutableData
-        if let data = _rawData {
+    var fcgiPacketData: NSData {
+        // Note: because of the cast to the protocol type, this invokes the protocol extension method
+        // implementation, and does not cause an infinite loop.
+        let result = (self as FCGIRecordType).fcgiPacketData.mutableCopy() as! NSMutableData
+        if let data = rawData {
             result.appendData(data)
         }
         return result
     }
     
-    override func processContentData(data: NSData) {
-        _rawData = data.subdataWithRange(NSMakeRange(0, Int(_initContentLength)))
+    mutating func processContentData(data: NSData) {
+        rawData = data.subdataWithRange(NSMakeRange(0, Int(_initContentLength)))
     }
     
-    func setRawData(data: NSData) {
-        _rawData = data
+    init(version: FCGIVersion, requestID: FCGIRequestID, contentLength: FCGIContentLength, paddingLength: FCGIPaddingLength, kind: FCGIRecordKind = .Stdin, rawData: NSData? = nil) {
+        self.version = version
+        self.requestID = requestID
+        self._initContentLength = contentLength
+        self.paddingLength = paddingLength
+        self.kind = kind
+        self.rawData = rawData
     }
 }
 
 // Params record
-class ParamsRecord: FCGIRecord {
-    // This stored property is an implicitly unwrapped optional so that we can
-    // call super.init early on in the init process to retrieve the content length
-    private var _params: RequestParams?
-    var params: RequestParams? { return _params }    // read-only accessor
+struct ParamsRecord: FCGIRecordType {
+    let version: FCGIVersion
+    let requestID: FCGIRequestID
     
-    override var type: FCGIRecordType { return .Params }
+    private(set) var contentLength: FCGIContentLength
+    let paddingLength: FCGIPaddingLength
     
-    override func processContentData(data: NSData) {
+    private(set) var params: RequestParams?
+    
+    let kind: FCGIRecordKind = .Params
+    
+    mutating func processContentData(data: NSData) {
         var paramData: [String: String] = [:]
         
         //Remove Padding
@@ -256,10 +275,17 @@ class ParamsRecord: FCGIRecord {
         }
         
         if paramData.count > 0 {
-            _params = paramData
+            params = paramData
         } else {
-            _params = nil
+            params = nil
         }
+    }
+    
+    init(version: FCGIVersion, requestID: FCGIRequestID, contentLength: FCGIContentLength, paddingLength: FCGIPaddingLength) {
+        self.version = version
+        self.requestID = requestID
+        self.contentLength = contentLength
+        self.paddingLength = paddingLength
     }
 }
 
@@ -272,7 +298,7 @@ func readUInt16FromBigEndianData(data: NSData, atIndex index: Int) -> UInt16 {
     return CFSwapInt16BigToHost(bigUInt16)
 }
 
-func createRecordFromHeaderData(data: NSData) -> FCGIRecord? {
+func createRecordFromHeaderData(data: NSData) -> FCGIRecordType? {
     // Check the length of the data
     if data.length == Int(FCGIRecordHeaderLength) {
         // Parse the version number
@@ -284,10 +310,10 @@ func createRecordFromHeaderData(data: NSData) -> FCGIRecord? {
             switch version {
             case .Version1:
                 // Parse the request type
-                var rawType: FCGIRecordType.RawValue = 0
+                var rawType: FCGIRecordKind.RawValue = 0
                 data.getBytes(&rawType, range: NSMakeRange(1, 1))
                 
-                if let type = FCGIRecordType(rawValue: rawType) {
+                if let type = FCGIRecordKind(rawValue: rawType) {
                     // Parse the request ID
                     let requestID = readUInt16FromBigEndianData(data, atIndex: 2)
                     
