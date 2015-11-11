@@ -11,7 +11,6 @@ import Foundation
 class FCGIBackend {
     private var currentRequests: [String: FCGIRequest] = [:]
     private var recordContext: [GCDAsyncSocket: FCGIRecordType] = [:]
-    internal var paramsAvailableHandler: (Request -> Void)?
     private let defaultSendStream = FCGIOutputStream.Stdout
     var delegate: BackendDelegate?
     
@@ -19,9 +18,6 @@ class FCGIBackend {
     
     func handleRecord(record: FCGIRecordType, fromSocket socket: GCDAsyncSocket) {
         let globalRequestID = "\(record.requestID)-\(socket.connectedPort)"
-        
-        // TODO: Guards to handle early exits in odd cases like malformed data; I don't like all of
-        // the forced unwrapping going on here right now...
         
         // Switch on record.type, since types can be mapped 1:1 to an FCGIRecord
         // subclass. This allows for a much cleaner chunk of code than a handful
@@ -40,49 +36,46 @@ class FCGIBackend {
             
             socket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
         case .Params:
-            let maybeRequest = currentRequests[globalRequestID]
-            
-            if let request = maybeRequest {
-                guard let record = record as? ParamsRecord else {
-                    fatalError("Invalid record type.")
-                }
-                
-                if let params = record.params {
-                    if request._params == nil {
-                        request._params = [:]
-                    }
-                    
-                    // Copy the values into the request params dictionary
-                    for key in params.keys {
-                        request._params[key] = params[key]
-                    }
-                } else {
-                    paramsAvailableHandler?(request)
-                }
-                
-                socket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
+            guard let request = currentRequests[globalRequestID] else {
+                NSLog("WARNING: handleRecord called for invalid requestID.")
+                return  // TODO: Throw an error?
             }
-        case .Stdin:
-            let maybeRequest = currentRequests[globalRequestID]
             
-            if let request = maybeRequest {
-                if request.streamData == nil {
-                    request.streamData = NSMutableData(capacity: 65536)
+            guard let record = record as? ParamsRecord else {
+                fatalError("Invalid record type with kind .Params.")
+            }
+            
+            if let params = record.params {
+                if request._params == nil {
+                    request._params = [:]
                 }
                 
-                guard let record = record as? ByteStreamRecord else {
-                    fatalError("Invalid record type.")
+                // Copy the values into the request params dictionary
+                for key in params.keys {
+                    request._params[key] = params[key]
                 }
-                
-                if let recordData = record.rawData {
-                    request.streamData!.appendData(recordData)
-                } else {
-                    delegate?.finishedParsingRequest(request)
-                    
-                    currentRequests.removeValueForKey(globalRequestID)
-                }
+            }
+            
+            socket.readDataToLength(FCGIRecordHeaderLength, withTimeout: FCGITimeout, tag: FCGISocketTag.AwaitingHeaderTag.rawValue)
+        case .Stdin:
+            guard let request = currentRequests[globalRequestID] else {
+                NSLog("WARNING: handleRecord called for invalid requestID.")
+                return
+            }
+            
+            if request.streamData == nil {
+                request.streamData = NSMutableData(capacity: 65536)
+            }
+            
+            guard let record = record as? ByteStreamRecord else {
+                fatalError("Invalid record type with kind .Stding.")
+            }
+            
+            if let recordData = record.rawData {
+                request.streamData!.appendData(recordData)  // Safe forced unwrap
             } else {
-                NSLog("WARNING: handleRecord called for invalid requestID")
+                delegate?.finishedParsingRequest(request)
+                currentRequests.removeValueForKey(globalRequestID)
             }
         default:
             // TODO: Throw proper error here and catch in server

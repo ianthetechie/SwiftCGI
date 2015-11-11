@@ -31,7 +31,6 @@
 let FCGIRecordHeaderLength: UInt = 8
 let FCGITimeout: NSTimeInterval = 5
 
-// TODO: this should probably be a struct...
 public class FCGIRequest {
     let record: BeginRequestRecord
     let keepConnection: Bool
