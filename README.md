@@ -43,12 +43,11 @@ project started as a port of (and is still heavily influenced by) FCGIKit. I sta
 and have since rewritten a lot of things to be more "Swifty." I chose this path because I don't want to re-invent
 the wheel. I may do a Swift wrapper around a canonical C implementation in the future to ensure the correctness of the implementation.
 
-# Getting Started
-1. Clone the repo
-2. Open the SwiftCGI Demo workspace
-3. Switch the target to SwiftCGIDemo if necessary
-4. Run the project
-5. [RECOMMENDED] Configure nginx to serve fcgi from your application (a full nginx tutorial may come later if I get
+# Quick Start
+1. Clone the demo project from [ianthetechie/SwiftCGI-Demo](https://github.com/ianthetechie/SwiftCGI-Demo).
+2. Open the SwiftCGI Demo project.
+3. Run the project
+4. [RECOMMENDED] Configure nginx to serve fcgi from your application (a full nginx tutorial may come later if I get
    bored, but for now, the following nginx.conf snippet should suffice... Put this inside your server block).
    Alternatively, you may use the embedded HTTP server scheme, which starts a (rather expreimental a this point)
    local HTTP server, which can be used to get started. I do NOT recommend this for serious use though. SwiftCGI is
