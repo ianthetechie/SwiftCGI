@@ -35,18 +35,19 @@ public typealias SessionData = [String: String]
 // MARK: Protocol that session managers must conform to
 
 public protocol SessionManager {
+    init()
+    
     func getDataForSessionID(sessionID: SessionID) -> SessionData?
     func setData(data: SessionData, forSessionID sessionID: SessionID)
-    static func sharedInstance() -> SessionManager
 }
 
 
 public class RequestSessionManager<T: SessionManager> {
     let sessionID: SessionID
-    let sessionManager: SessionManager
+    let sessionManager: T
     
     public init?(request: Request) {
-        self.sessionManager = T.sharedInstance()
+        self.sessionManager = T()
         
         if let id = request.sessionID {
             sessionID = id
@@ -68,7 +69,11 @@ public class RequestSessionManager<T: SessionManager> {
 
 // MARK: Can't get much more basic than this; session data is sent to /dev/null
 
-public class NilSessionManager: SessionManager {
+public final class NilSessionManager: SessionManager {
+    public init() {
+        // Public initializer
+    }
+    
     public func getDataForSessionID(sessionID: SessionID) -> SessionData? {
         return nil
     }
@@ -76,20 +81,17 @@ public class NilSessionManager: SessionManager {
     public func setData(data: SessionData, forSessionID sessionID: SessionID) {
         // Do nothing
     }
-    
-    public class func sharedInstance() -> SessionManager {
-        struct Static {
-            static let instance = NilSessionManager()
-        }
-        return Static.instance
-    }
 }
 
 
 // MARK: Basic, transient in-memory session support; great for quick testing
 
-public class TransientMemorySessionManager: SessionManager {
+public final class TransientMemorySessionManager: SessionManager {
     private var sessionData: [String: SessionData] = [:]
+    
+    public init() {
+        // Public initializer
+    }
     
     public func getDataForSessionID(sessionID: SessionID) -> SessionData? {
         return sessionData[sessionID]
@@ -97,12 +99,5 @@ public class TransientMemorySessionManager: SessionManager {
     
     public func setData(data: SessionData, forSessionID sessionID: SessionID) {
         sessionData[sessionID] = data
-    }
-    
-    public class func sharedInstance() -> SessionManager {
-        struct Static {
-            static let instance = TransientMemorySessionManager()
-        }
-        return Static.instance
     }
 }
