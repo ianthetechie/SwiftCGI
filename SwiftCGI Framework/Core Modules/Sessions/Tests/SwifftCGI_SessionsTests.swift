@@ -28,15 +28,13 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import Cocoa
 import XCTest
-import SwiftCGI
 
 class SwifftCGI_SessionsTests: XCTestCase {
     let randomSessionID = "LSkjhafdfsiFNDSF97(*^FDfs5FDS&fSusGDFfsdfgjvbcm,"
     
     func testNilSessionManager() {
-        let manager = NilSessionManager()
+        let manager = NilSessionManager.instance
         
         // Verify that we don't have a session yet
         XCTAssert(manager.getDataForSessionID(randomSessionID) == nil, "Initial session data should be nil")
@@ -50,7 +48,7 @@ class SwifftCGI_SessionsTests: XCTestCase {
     }
     
     func testTransientMemorySessionManager() {
-        let manager = TransientMemorySessionManager()
+        let manager = TransientMemorySessionManager.instance
         
         // Verify that we don't have a session yet
         XCTAssert(manager.getDataForSessionID(randomSessionID) == nil, "Initial session data should be nil")
@@ -65,30 +63,30 @@ class SwifftCGI_SessionsTests: XCTestCase {
     }
 
     // TODO: Figure out how to test this... too many private types
-//    func testRequestSessionManager() {
-//        let record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
-//        record.role = FCGIRequestRole.Responder
-//        record.flags = FCGIRequestFlags.allZeros
-//        
-//        let request = FCGIRequest(record: record)
-//        
-//        let nilManager = RequestSessionManager<TransientMemorySessionManager>(request: request)
-//        XCTAssert(nilManager == nil, "Initializer should fail when there is no sessionid parameter")
-//        
-//        request.generateSessionID()
-//        
-//        let manager = RequestSessionManager<TransientMemorySessionManager>(request: request)
-//        XCTAssert(manager != nil, "Initializer should no longer fail")
-//        
-//        // Verify that we don't have a session yet
-//        XCTAssert(manager!.getData() == nil, "Initial session data should be nil")
-//        
-//        // Verify that we can persist a key
-//        let sessionData: SessionData = ["foo": "bar"]
-//        manager!.setData(sessionData)
-//        
-//        let persistedSessionData = manager!.getData()
-//        XCTAssert(persistedSessionData != nil, "Session data was not stored")
-//        XCTAssert(persistedSessionData! == sessionData, "Stored session data does not match")
-//    }
+    func testRequestSessionManager() {
+        var record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
+        record.role = FCGIRequestRole.Responder
+        record.flags = FCGIRequestFlags.allZeros
+        
+        var request = FCGIRequest(record: record)
+        
+        let nilManager = RequestSessionManager<TransientMemorySessionManager>(request: request)
+        XCTAssert(nilManager == nil, "Initializer should fail when there is no sessionid parameter")
+        
+        request.generateSessionID()
+        
+        let manager = RequestSessionManager<TransientMemorySessionManager>(request: request)
+        XCTAssert(manager != nil, "Initializer should no longer fail")
+        
+        // Verify that we don't have a session yet
+        XCTAssert(manager!.getData() == nil, "Initial session data should be nil")
+        
+        // Verify that we can persist a key
+        let sessionData: SessionData = ["foo": "bar"]
+        manager!.setData(sessionData)
+        
+        let persistedSessionData = manager!.getData()
+        XCTAssert(persistedSessionData != nil, "Session data was not stored")
+        XCTAssert(persistedSessionData! == sessionData, "Stored session data does not match")
+    }
 }

@@ -46,13 +46,9 @@ class FCGIBackend {
             }
             
             if let params = record.params {
-                if request._params == nil {
-                    request._params = [:]
-                }
-                
                 // Copy the values into the request params dictionary
                 for key in params.keys {
-                    request._params[key] = params[key]
+                    request.params[key] = params[key]
                 }
             }
             

@@ -36,15 +36,16 @@
 		CEEBFD721A5A20590014D017 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* Types.swift */; };
 		CEEBFD881A5A591F0014D017 /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBFD861A5A591F0014D017 /* GCDAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */; };
-		E91242351C002AD400688157 /* Sessions+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242331C002AD400688157 /* Sessions+Extensions.swift */; };
-		E91242361C002AD400688157 /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242341C002AD400688157 /* SessionManagement.swift */; };
 		E912423A1C002E8F00688157 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */; };
 		E912423B1C002EE200688157 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C41BB7B14C009984DB /* Record.swift */; };
 		E912423C1C002EFF00688157 /* FCGIBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C21BB7B14C009984DB /* FCGIBackend.swift */; };
-		E912423D1C002F0800688157 /* FCGIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C31BB7B14C009984DB /* FCGIRequest.swift */; };
 		E912423E1C002F1500688157 /* BackendProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C01BB7B14C009984DB /* BackendProtocol.swift */; };
+		E91242451C00509900688157 /* SwifftCGI_SessionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242381C002BBA00688157 /* SwifftCGI_SessionsTests.swift */; };
+		E91242471C00560100688157 /* FCGIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C31BB7B14C009984DB /* FCGIRequest.swift */; };
+		E91242481C00561000688157 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
+		E91242491C00567100688157 /* Sessions+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242331C002AD400688157 /* Sessions+Extensions.swift */; };
+		E912424A1C00567500688157 /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242341C002AD400688157 /* SessionManagement.swift */; };
 		E993D6131BB73B12007C3489 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
-		E993D6141BB74ABB007C3489 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
 		E99E5FE01AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
 /* End PBXBuildFile section */
@@ -166,7 +167,6 @@
 				CEEBFD2D1A5A1D420014D017 /* SwiftCGI */,
 				E91242311C002AD400688157 /* Core Modules */,
 				CEEBFD7A1A5A58850014D017 /* Other Sources */,
-				CEEBFD3A1A5A1D430014D017 /* SwiftCGITests */,
 				CEEBFD2C1A5A1D420014D017 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -192,6 +192,7 @@
 				CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */,
 				CE57390C1A65179200AB02B8 /* Util.swift */,
 				E99E5FDE1AA2D8B600BED31D /* Router.swift */,
+				CEEBFD3A1A5A1D430014D017 /* Tests */,
 				CEEBFD2E1A5A1D420014D017 /* Supporting Files */,
 			);
 			path = SwiftCGI;
@@ -205,7 +206,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		CEEBFD3A1A5A1D430014D017 /* SwiftCGITests */ = {
+		CEEBFD3A1A5A1D430014D017 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				CEEBFD3D1A5A1D430014D017 /* PrimitiveTests.swift */,
@@ -213,8 +214,9 @@
 				CED98B2A1A5E58CD0077A4EC /* HTTPTests.swift */,
 				CEEBFD3B1A5A1D430014D017 /* Supporting Files */,
 			);
+			name = Tests;
 			path = SwiftCGITests;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		CEEBFD3B1A5A1D430014D017 /* Supporting Files */ = {
 			isa = PBXGroup;
@@ -245,9 +247,9 @@
 		E91242321C002AD400688157 /* Sessions */ = {
 			isa = PBXGroup;
 			children = (
-				E91242371C002BBA00688157 /* Tests */,
 				E91242331C002AD400688157 /* Sessions+Extensions.swift */,
 				E91242341C002AD400688157 /* SessionManagement.swift */,
+				E91242371C002BBA00688157 /* Tests */,
 			);
 			path = Sessions;
 			sourceTree = "<group>";
@@ -379,8 +381,6 @@
 				68D438E81BB7B14C009984DB /* http_parser.c in Sources */,
 				E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */,
 				68D438EF1BB7B14C009984DB /* http_parser_accessors.c in Sources */,
-				E91242361C002AD400688157 /* SessionManagement.swift in Sources */,
-				E91242351C002AD400688157 /* Sessions+Extensions.swift in Sources */,
 				CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */,
 				68D438DD1BB7B14C009984DB /* BackendProtocol.swift in Sources */,
 				E993D6131BB73B12007C3489 /* Request.swift in Sources */,
@@ -400,19 +400,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				E912423A1C002E8F00688157 /* GCDAsyncSocket.m in Sources */,
+				E91242481C00561000688157 /* Request.swift in Sources */,
 				E99E5FE01AA2D8B600BED31D /* Router.swift in Sources */,
 				E912423B1C002EE200688157 /* Record.swift in Sources */,
-				E993D6141BB74ABB007C3489 /* Request.swift in Sources */,
 				CE57390E1A65197B00AB02B8 /* Util.swift in Sources */,
 				CEEBFD3E1A5A1D430014D017 /* PrimitiveTests.swift in Sources */,
 				CE052E411A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */,
+				E91242451C00509900688157 /* SwifftCGI_SessionsTests.swift in Sources */,
 				CE052E3B1A5CBE1B00F8DA34 /* UIntExtensions.swift in Sources */,
+				E91242471C00560100688157 /* FCGIRequest.swift in Sources */,
 				CE052E441A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */,
 				CED98B291A5E58090077A4EC /* RecordTests.swift in Sources */,
 				CE052E3C1A5CC17100F8DA34 /* Types.swift in Sources */,
 				E912423C1C002EFF00688157 /* FCGIBackend.swift in Sources */,
-				E912423D1C002F0800688157 /* FCGIRequest.swift in Sources */,
 				CED98B2B1A5E58CD0077A4EC /* HTTPTests.swift in Sources */,
+				E912424A1C00567500688157 /* SessionManagement.swift in Sources */,
+				E91242491C00567100688157 /* Sessions+Extensions.swift in Sources */,
 				E912423E1C002F1500688157 /* BackendProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

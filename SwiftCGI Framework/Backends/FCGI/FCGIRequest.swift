@@ -35,8 +35,7 @@ public class FCGIRequest {
     let record: BeginRequestRecord
     let keepConnection: Bool
     
-    var _params: RequestParams!  // Set externally and never reset to nil thereafter
-    public var params: RequestParams { return _params } // Accessor for code outside the framework
+    public internal(set) var params: RequestParams = [:]  // Set externally and never reset to nil thereafter
     
     private var _cookies: [String: String]?
     
