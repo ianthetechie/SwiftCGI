@@ -1,5 +1,5 @@
 //
-//  SwifftCGI Sessions.h
+//  Sessions+Extensions.swift
 //  SwifftCGI Sessions
 //
 //  Copyright (c) 2014, Ian Wagner
@@ -28,14 +28,41 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <Cocoa/Cocoa.h>
-
-//! Project version number for SwifftCGI Sessions.
-FOUNDATION_EXPORT double SwifftCGI_SessionsVersionNumber;
-
-//! Project version string for SwifftCGI Sessions.
-FOUNDATION_EXPORT const unsigned char SwifftCGI_SessionsVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <SwifftCGI_Sessions/PublicHeader.h>
+import Foundation
 
 
+let SessionIDCookieName = "sessionid"
+
+// Extension to implement session handling properties on Request
+public extension Request {
+    public var sessionID: String? { return cookies?[SessionIDCookieName] }
+    
+    public mutating func generateSessionID() {
+        if sessionID == nil {
+            var newCookies = cookies ?? [:]
+            newCookies[SessionIDCookieName] = NSUUID().UUIDString
+            self.cookies = newCookies
+        } else {
+            fatalError("Attempted to generate a session ID for a request that already has a session ID")
+        }
+    }
+    
+    public func getSessionManager<T: SessionManager>() -> RequestSessionManager<T>? {
+        return RequestSessionManager<T>(request: self)
+    }
+}
+
+
+// Define a handler function to modify the response accordingly
+public func sessionMiddlewareHandler(var request: Request, var response: HTTPResponse) -> HTTPResponse {
+    // Add the session cookie if necessary
+    if request.sessionID == nil {
+        request.generateSessionID()
+    }
+    
+    if let sessionID = request.sessionID {
+        response.setResponseHeader(.SetCookie([SessionIDCookieName: "\(sessionID); Max-Age=86400"]))
+    }
+    
+    return response
+}

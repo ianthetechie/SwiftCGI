@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CEEBFD351A5A1D430014D017"
+               BuildableName = "SwiftCGITests.xctest"
+               BlueprintName = "SwiftCGITests"
+               ReferencedContainer = "container:SwiftCGI.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "CEEBFD2A1A5A1D420014D017"
+            BuildableName = "SwiftCGI.framework"
+            BlueprintName = "SwiftCGI"
+            ReferencedContainer = "container:SwiftCGI.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>

@@ -28,8 +28,6 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-import SwiftCGI
-
 public typealias SessionID = String
 public typealias SessionData = [String: String]
 
@@ -66,6 +64,7 @@ public class RequestSessionManager<T: SessionManager> {
         sessionManager.setData(data, forSessionID: sessionID)
     }
 }
+
 
 // MARK: Can't get much more basic than this; session data is sent to /dev/null
 

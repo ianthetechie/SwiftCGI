@@ -36,6 +36,9 @@
 		CEEBFD721A5A20590014D017 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* Types.swift */; };
 		CEEBFD881A5A591F0014D017 /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBFD861A5A591F0014D017 /* GCDAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */; };
+		E91242351C002AD400688157 /* Sessions+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242331C002AD400688157 /* Sessions+Extensions.swift */; };
+		E91242361C002AD400688157 /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242341C002AD400688157 /* SessionManagement.swift */; };
+		E91242391C002BBA00688157 /* SwifftCGI_SessionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242381C002BBA00688157 /* SwifftCGI_SessionsTests.swift */; };
 		E993D6131BB73B12007C3489 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E993D6141BB74ABB007C3489 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
@@ -82,6 +85,9 @@
 		CEEBFD7B1A5A58BF0014D017 /* SwiftCGITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftCGITests-Bridging-Header.h"; sourceTree = "<group>"; };
 		CEEBFD861A5A591F0014D017 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
 		CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
+		E91242331C002AD400688157 /* Sessions+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sessions+Extensions.swift"; sourceTree = "<group>"; };
+		E91242341C002AD400688157 /* SessionManagement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagement.swift; sourceTree = "<group>"; };
+		E91242381C002BBA00688157 /* SwifftCGI_SessionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwifftCGI_SessionsTests.swift; sourceTree = "<group>"; };
 		E993D6121BB73B12007C3489 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		E99E5FDE1AA2D8B600BED31D /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -154,6 +160,7 @@
 			children = (
 				68D438BF1BB7B14C009984DB /* Backends */,
 				CEEBFD2D1A5A1D420014D017 /* SwiftCGI */,
+				E91242311C002AD400688157 /* Core Modules */,
 				CEEBFD7A1A5A58850014D017 /* Other Sources */,
 				CEEBFD3A1A5A1D430014D017 /* SwiftCGITests */,
 				CEEBFD2C1A5A1D420014D017 /* Products */,
@@ -221,6 +228,32 @@
 				CEEBFD7B1A5A58BF0014D017 /* SwiftCGITests-Bridging-Header.h */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		E91242311C002AD400688157 /* Core Modules */ = {
+			isa = PBXGroup;
+			children = (
+				E91242321C002AD400688157 /* Sessions */,
+			);
+			path = "Core Modules";
+			sourceTree = "<group>";
+		};
+		E91242321C002AD400688157 /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				E91242371C002BBA00688157 /* Tests */,
+				E91242331C002AD400688157 /* Sessions+Extensions.swift */,
+				E91242341C002AD400688157 /* SessionManagement.swift */,
+			);
+			path = Sessions;
+			sourceTree = "<group>";
+		};
+		E91242371C002BBA00688157 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				E91242381C002BBA00688157 /* SwifftCGI_SessionsTests.swift */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -342,6 +375,8 @@
 				68D438E81BB7B14C009984DB /* http_parser.c in Sources */,
 				E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */,
 				68D438EF1BB7B14C009984DB /* http_parser_accessors.c in Sources */,
+				E91242361C002AD400688157 /* SessionManagement.swift in Sources */,
+				E91242351C002AD400688157 /* Sessions+Extensions.swift in Sources */,
 				CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */,
 				68D438DD1BB7B14C009984DB /* BackendProtocol.swift in Sources */,
 				E993D6131BB73B12007C3489 /* Request.swift in Sources */,
@@ -361,6 +396,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E99E5FE01AA2D8B600BED31D /* Router.swift in Sources */,
+				E91242391C002BBA00688157 /* SwifftCGI_SessionsTests.swift in Sources */,
 				E993D6141BB74ABB007C3489 /* Request.swift in Sources */,
 				CE57390E1A65197B00AB02B8 /* Util.swift in Sources */,
 				CEEBFD3E1A5A1D430014D017 /* PrimitiveTests.swift in Sources */,
