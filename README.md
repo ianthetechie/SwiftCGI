@@ -46,7 +46,7 @@ the wheel. I may do a Swift wrapper around a canonical C implementation in the f
 # Quick Start
 1. Clone the demo project from [ianthetechie/SwiftCGI-Demo](https://github.com/ianthetechie/SwiftCGI-Demo).
 2. Open the SwiftCGI Demo project.
-3. Run the project
+3. Run the project.
 4. [RECOMMENDED] Configure nginx to serve fcgi from your application (a full nginx tutorial may come later if I get
    bored, but for now, the following nginx.conf snippet should suffice... Put this inside your server block).
    Alternatively, you may use the embedded HTTP server scheme, which starts a (rather expreimental a this point)
