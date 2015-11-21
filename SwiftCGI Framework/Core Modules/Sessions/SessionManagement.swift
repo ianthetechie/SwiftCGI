@@ -35,7 +35,7 @@ public typealias SessionData = [String: String]
 // MARK: Protocol that session managers must conform to
 
 public protocol SessionManager {
-    init()
+    static var instance: Self { get }
     
     func getDataForSessionID(sessionID: SessionID) -> SessionData?
     func setData(data: SessionData, forSessionID sessionID: SessionID)
@@ -47,7 +47,7 @@ public class RequestSessionManager<T: SessionManager> {
     let sessionManager: T
     
     public init?(request: Request) {
-        self.sessionManager = T()
+        self.sessionManager = T.instance
         
         if let id = request.sessionID {
             sessionID = id
@@ -62,6 +62,7 @@ public class RequestSessionManager<T: SessionManager> {
     }
     
     public func setData(data: SessionData) {
+        // TODO: Think about thread safety here
         sessionManager.setData(data, forSessionID: sessionID)
     }
 }
@@ -70,9 +71,7 @@ public class RequestSessionManager<T: SessionManager> {
 // MARK: Can't get much more basic than this; session data is sent to /dev/null
 
 public final class NilSessionManager: SessionManager {
-    public init() {
-        // Public initializer
-    }
+    public static var instance = NilSessionManager()
     
     public func getDataForSessionID(sessionID: SessionID) -> SessionData? {
         return nil
@@ -89,9 +88,7 @@ public final class NilSessionManager: SessionManager {
 public final class TransientMemorySessionManager: SessionManager {
     private var sessionData: [String: SessionData] = [:]
     
-    public init() {
-        // Public initializer
-    }
+    public static var instance = TransientMemorySessionManager()
     
     public func getDataForSessionID(sessionID: SessionID) -> SessionData? {
         return sessionData[sessionID]
