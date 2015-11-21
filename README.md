@@ -1,4 +1,4 @@
-# SwiftCGI
+# SwiftCGI [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 An object-functional microframework for developing FCGI applications in Swift
 
 ## About
