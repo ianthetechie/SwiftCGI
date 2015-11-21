@@ -284,7 +284,7 @@ public enum HTTPResponseHeader: HTTPHeader {
 // static files. nginx is perfectly good at that already. Notable exceptions to the "no static file
 // types" rule are images, which have many valid dynamic generation use cases (QR codes, barcodes,
 // transformations on uploaded files, etc).
-public enum HTTPContentType {
+public enum HTTPContentType: Equatable {
     case TextHTML(Charset)
     case TextPlain(Charset)
     case ApplicationJSON
@@ -299,5 +299,16 @@ public enum HTTPContentType {
         case .ImagePNG: return "image/png"
         case .ImageJPEG: return "image/jpeg"
         }
+    }
+}
+
+public func ==(a: HTTPContentType, b: HTTPContentType) -> Bool {
+    switch (a, b) {
+    case (.TextHTML(let x), .TextHTML(let y)) where x == y:     return true
+    case (.TextPlain(let x), .TextPlain(let y)) where x == y:   return true
+    case (.ApplicationJSON, .ApplicationJSON):                  return true
+    case (.ImagePNG, .ImagePNG):                                return true
+    case (.ImageJPEG, .ImageJPEG):                              return true
+    default:                                                    return false
     }
 }

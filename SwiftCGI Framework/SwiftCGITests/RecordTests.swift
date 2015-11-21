@@ -31,7 +31,7 @@
 import XCTest
 
 class RecordTests: XCTestCase {
-    func verifyBasicInfoAndHeaderForRecord(record: FCGIRecord) {
+    func verifyBasicInfoAndHeaderForRecord(record: FCGIRecordType) {
         let fcgiData = record.fcgiPacketData
         
         // Get the data as raw bytes for ease of verification
@@ -41,7 +41,7 @@ class RecordTests: XCTestCase {
         
         // Verify the header bytes
         XCTAssertEqual(bytes[0], FCGIVersion.Version1.rawValue, "Incorrect FCGI version")
-        XCTAssertEqual(bytes[1], record.type.rawValue, "Incorrect type")
+        XCTAssertEqual(bytes[1], record.kind.rawValue, "Incorrect type")
         
         let (requestIDMSB, requestIDLSB) = record.requestID.decomposeBigEndian()
         XCTAssertEqual(bytes[2], requestIDMSB, "Incorrect request ID MSB")
@@ -56,9 +56,9 @@ class RecordTests: XCTestCase {
     }
     
     func testBeginRequestRecord() {
-        let record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
+        var record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
         verifyBasicInfoAndHeaderForRecord(record)
-        XCTAssertEqual(record.type, .BeginRequest, "Incorrect record type")
+        XCTAssertEqual(record.kind, FCGIRecordKind.BeginRequest, "Incorrect record type")
         
         XCTAssertEqual(record.fcgiPacketData.length, 8, "Incorrect packet data length")
         
@@ -83,7 +83,7 @@ class RecordTests: XCTestCase {
         let record = EndRequestRecord(version: .Version1, requestID: 1, paddingLength: 0, protocolStatus: .RequestComplete, applicationStatus: 0)
         
         verifyBasicInfoAndHeaderForRecord(record)
-        XCTAssertEqual(record.type, .EndRequest, "Incorrect record type")
+        XCTAssertEqual(record.kind, FCGIRecordKind.EndRequest, "Incorrect record type")
         
         let fcgiData = record.fcgiPacketData
         XCTAssertEqual(fcgiData.length, 16, "Incorrect packet data length")
@@ -105,10 +105,10 @@ class RecordTests: XCTestCase {
     }
     
     func testByteStreamRecord() {
-        let record = ByteStreamRecord(version: .Version1, requestID: 1, contentLength: 0, paddingLength: 0)
+        var record = ByteStreamRecord(version: .Version1, requestID: 1, contentLength: 0, paddingLength: 0)
         
         verifyBasicInfoAndHeaderForRecord(record)
-        XCTAssertEqual(record.type, .Stdin, "Incorrect record type")
+        XCTAssertEqual(record.kind, FCGIRecordKind.Stdin, "Incorrect record type")
         
         XCTAssertEqual(record.fcgiPacketData.length, 8, "Incorrect packet data length (before processContentData)")
         
@@ -128,7 +128,7 @@ class RecordTests: XCTestCase {
         XCTAssertEqual(record.fcgiPacketData.length, 8, "Incorrect packet data length (after processContentData)")
         
         // NOW we manually set the data
-        record.setRawData(byteData)
+        record.rawData = byteData
         XCTAssertEqual(record.contentLength, UInt16(numBytes), "Incorrect content length (after setRawData)")
         XCTAssertEqual(record.fcgiPacketData.length, 8 + numBytes, "Incorrect packet data length (after setRawData)")
         
@@ -157,9 +157,9 @@ class RecordTests: XCTestCase {
         // words = data_string.split()
         // data_string = struct.pack('!%s' % ('I' * len(words)), *[int(x, 16) for x in words])  // pack the parsed chunks into a string
         // print base64.b64decode(data_string)
-        let data = NSData(base64EncodedString: "DwxTQ1JJUFRfRklMRU5BTUUvc2NyaXB0cy9jZ2kMAFFVRVJZX1NUUklORw4DUkVRVUVTVF9NRVRIT0RHRVQMAENPTlRFTlRfVFlQRQ4AQ09OVEVOVF9MRU5HVEgLBFNDUklQVF9OQU1FL2NnaQsEUkVRVUVTVF9VUkkvY2dpDARET0NVTUVOVF9VUkkvY2dpDSJET0NVTUVOVF9ST09UL3Vzci9sb2NhbC9DZWxsYXIvbmdpbngvMS42LjIvaHRtbA8IU0VSVkVSX1BST1RPQ09MSFRUUC8xLjERB0dBVEVXQVlfSU5URVJGQUNFQ0dJLzEuMQ8LU0VSVkVSX1NPRlRXQVJFbmdpbngvMS42LjILCVJFTU9URV9BRERSMTI3LjAuMC4xCwVSRU1PVEVfUE9SVDU3MTk4CwlTRVJWRVJfQUREUjEyNy4wLjAuMQsEU0VSVkVSX1BPUlQ4MDgwCwlTRVJWRVJfTkFNRWxvY2FsaG9zdA8DUkVESVJFQ1RfU1RBVFVTMjAwCQ5IVFRQX0hPU1Rsb2NhbGhvc3Q6ODA4MAsISFRUUF9QUkFHTUFuby1jYWNoZQsuSFRUUF9DT09LSUVzZXNzaW9uaWQ9ODQwNUY4NUUtOTQ5Ni00NUEwLUE3MjQtREI5RDkzMDEwN0Q0DwpIVFRQX0NPTk5FQ1RJT05rZWVwLWFsaXZlCz9IVFRQX0FDQ0VQVHRleHQvaHRtbCxhcHBsaWNhdGlvbi94aHRtbCt4bWwsYXBwbGljYXRpb24veG1sO3E9MC45LCovKjtxPTAuOA92SFRUUF9VU0VSX0FHRU5UTW96aWxsYS81LjAgKE1hY2ludG9zaDsgSW50ZWwgTWFjIE9TIFggMTBfMTBfMikgQXBwbGVXZWJLaXQvNjAwLjMuMTggKEtIVE1MLCBsaWtlIEdlY2tvKSBWZXJzaW9uLzguMC4zIFNhZmFyaS82MDAuMy4xOBQFSFRUUF9BQ0NFUFRfTEFOR1VBR0Vlbi11cxQNSFRUUF9BQ0NFUFRfRU5DT0RJTkdnemlwLCBkZWZsYXRlEglIVFRQX0NBQ0hFX0NPTlRST0xtYXgtYWdlPTAAAAAAAA==", options: .allZeros)!
+        let data = NSData(base64EncodedString: "DwxTQ1JJUFRfRklMRU5BTUUvc2NyaXB0cy9jZ2kMAFFVRVJZX1NUUklORw4DUkVRVUVTVF9NRVRIT0RHRVQMAENPTlRFTlRfVFlQRQ4AQ09OVEVOVF9MRU5HVEgLBFNDUklQVF9OQU1FL2NnaQsEUkVRVUVTVF9VUkkvY2dpDARET0NVTUVOVF9VUkkvY2dpDSJET0NVTUVOVF9ST09UL3Vzci9sb2NhbC9DZWxsYXIvbmdpbngvMS42LjIvaHRtbA8IU0VSVkVSX1BST1RPQ09MSFRUUC8xLjERB0dBVEVXQVlfSU5URVJGQUNFQ0dJLzEuMQ8LU0VSVkVSX1NPRlRXQVJFbmdpbngvMS42LjILCVJFTU9URV9BRERSMTI3LjAuMC4xCwVSRU1PVEVfUE9SVDU3MTk4CwlTRVJWRVJfQUREUjEyNy4wLjAuMQsEU0VSVkVSX1BPUlQ4MDgwCwlTRVJWRVJfTkFNRWxvY2FsaG9zdA8DUkVESVJFQ1RfU1RBVFVTMjAwCQ5IVFRQX0hPU1Rsb2NhbGhvc3Q6ODA4MAsISFRUUF9QUkFHTUFuby1jYWNoZQsuSFRUUF9DT09LSUVzZXNzaW9uaWQ9ODQwNUY4NUUtOTQ5Ni00NUEwLUE3MjQtREI5RDkzMDEwN0Q0DwpIVFRQX0NPTk5FQ1RJT05rZWVwLWFsaXZlCz9IVFRQX0FDQ0VQVHRleHQvaHRtbCxhcHBsaWNhdGlvbi94aHRtbCt4bWwsYXBwbGljYXRpb24veG1sO3E9MC45LCovKjtxPTAuOA92SFRUUF9VU0VSX0FHRU5UTW96aWxsYS81LjAgKE1hY2ludG9zaDsgSW50ZWwgTWFjIE9TIFggMTBfMTBfMikgQXBwbGVXZWJLaXQvNjAwLjMuMTggKEtIVE1MLCBsaWtlIEdlY2tvKSBWZXJzaW9uLzguMC4zIFNhZmFyaS82MDAuMy4xOBQFSFRUUF9BQ0NFUFRfTEFOR1VBR0Vlbi11cxQNSFRUUF9BQ0NFUFRfRU5DT0RJTkdnemlwLCBkZWZsYXRlEglIVFRQX0NBQ0hFX0NPTlRST0xtYXgtYWdlPTAAAAAAAA==", options: [])!
         let paddingLength = 5
-        let record = ParamsRecord(version: .Version1, requestID: 1, contentLength: 832 - paddingLength, paddingLength: FCGIPaddingLength(paddingLength))
+        var record = ParamsRecord(version: .Version1, requestID: 1, contentLength: UInt16(832 - paddingLength), paddingLength: FCGIPaddingLength(paddingLength))
         record.processContentData(data)
         
         let expectedResult = ["SERVER_ADDR": "127.0.0.1",

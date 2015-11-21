@@ -38,7 +38,11 @@
 		CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */; };
 		E91242351C002AD400688157 /* Sessions+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242331C002AD400688157 /* Sessions+Extensions.swift */; };
 		E91242361C002AD400688157 /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242341C002AD400688157 /* SessionManagement.swift */; };
-		E91242391C002BBA00688157 /* SwifftCGI_SessionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242381C002BBA00688157 /* SwifftCGI_SessionsTests.swift */; };
+		E912423A1C002E8F00688157 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */; };
+		E912423B1C002EE200688157 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C41BB7B14C009984DB /* Record.swift */; };
+		E912423C1C002EFF00688157 /* FCGIBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C21BB7B14C009984DB /* FCGIBackend.swift */; };
+		E912423D1C002F0800688157 /* FCGIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C31BB7B14C009984DB /* FCGIRequest.swift */; };
+		E912423E1C002F1500688157 /* BackendProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C01BB7B14C009984DB /* BackendProtocol.swift */; };
 		E993D6131BB73B12007C3489 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E993D6141BB74ABB007C3489 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
@@ -317,7 +321,7 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Ian Wagner";
 				TargetAttributes = {
 					CEEBFD2A1A5A1D420014D017 = {
@@ -395,8 +399,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E912423A1C002E8F00688157 /* GCDAsyncSocket.m in Sources */,
 				E99E5FE01AA2D8B600BED31D /* Router.swift in Sources */,
-				E91242391C002BBA00688157 /* SwifftCGI_SessionsTests.swift in Sources */,
+				E912423B1C002EE200688157 /* Record.swift in Sources */,
 				E993D6141BB74ABB007C3489 /* Request.swift in Sources */,
 				CE57390E1A65197B00AB02B8 /* Util.swift in Sources */,
 				CEEBFD3E1A5A1D430014D017 /* PrimitiveTests.swift in Sources */,
@@ -405,7 +410,10 @@
 				CE052E441A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */,
 				CED98B291A5E58090077A4EC /* RecordTests.swift in Sources */,
 				CE052E3C1A5CC17100F8DA34 /* Types.swift in Sources */,
+				E912423C1C002EFF00688157 /* FCGIBackend.swift in Sources */,
+				E912423D1C002F0800688157 /* FCGIRequest.swift in Sources */,
 				CED98B2B1A5E58CD0077A4EC /* HTTPTests.swift in Sources */,
+				E912423E1C002F1500688157 /* BackendProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +448,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -515,6 +524,7 @@
 				INFOPLIST_FILE = SwiftCGI/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ianthetechie.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Backends/HTTP/CHTTPParser";
@@ -537,6 +547,7 @@
 				INFOPLIST_FILE = SwiftCGI/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ianthetechie.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Backends/HTTP/CHTTPParser";
@@ -559,6 +570,7 @@
 				);
 				INFOPLIST_FILE = SwiftCGITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ianthetechie.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SwiftCGITests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -576,6 +588,7 @@
 				);
 				INFOPLIST_FILE = SwiftCGITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ianthetechie.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SwiftCGITests-Bridging-Header.h";
 			};
@@ -601,6 +614,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -639,6 +653,7 @@
 				INFOPLIST_FILE = SwiftCGI/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ianthetechie.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Backends/HTTP/CHTTPParser";
@@ -662,6 +677,7 @@
 				);
 				INFOPLIST_FILE = SwiftCGITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ianthetechie.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SwiftCGITests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
