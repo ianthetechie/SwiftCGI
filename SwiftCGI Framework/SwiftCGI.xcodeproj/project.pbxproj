@@ -45,6 +45,8 @@
 		E91242481C00561000688157 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E91242491C00567100688157 /* Sessions+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242331C002AD400688157 /* Sessions+Extensions.swift */; };
 		E912424A1C00567500688157 /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242341C002AD400688157 /* SessionManagement.swift */; };
+		E98F69411C02D91600E27F3F /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242341C002AD400688157 /* SessionManagement.swift */; };
+		E98F69421C02D91C00E27F3F /* Sessions+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242331C002AD400688157 /* Sessions+Extensions.swift */; };
 		E993D6131BB73B12007C3489 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
 		E99E5FE01AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
@@ -379,6 +381,8 @@
 				CE052E401A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */,
 				68D438DF1BB7B14C009984DB /* FCGIRequest.swift in Sources */,
 				68D438E81BB7B14C009984DB /* http_parser.c in Sources */,
+				E98F69411C02D91600E27F3F /* SessionManagement.swift in Sources */,
+				E98F69421C02D91C00E27F3F /* Sessions+Extensions.swift in Sources */,
 				E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */,
 				68D438EF1BB7B14C009984DB /* http_parser_accessors.c in Sources */,
 				CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */,
