@@ -64,10 +64,7 @@ class SwifftCGI_SessionsTests: XCTestCase {
 
     // TODO: Figure out how to test this... too many private types
     func testRequestSessionManager() {
-        var record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
-        record.role = FCGIRequestRole.Responder
-        record.flags = FCGIRequestFlags.allZeros
-        
+        let record = BeginRequestRecord(version: .Version1, requestID: 1, contentLength: 8, paddingLength: 0)
         var request = FCGIRequest(record: record)
         
         let nilManager = RequestSessionManager<TransientMemorySessionManager>(request: request)

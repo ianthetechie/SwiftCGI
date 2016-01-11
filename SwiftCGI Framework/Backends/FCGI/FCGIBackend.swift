@@ -126,7 +126,7 @@ extension FCGIBackend: Backend {
     }
     
     func sendResponse(request: Request, response: HTTPResponse) -> Bool {
-        guard let req = request as? FCGIRequest else {
+        guard let req = request as? FCGIRequest else {  // TODO: Refactor with typealias?
             fatalError("Could not convert request to FCGIRequest")
         }
         

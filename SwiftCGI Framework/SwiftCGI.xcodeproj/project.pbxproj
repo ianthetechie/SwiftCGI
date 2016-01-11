@@ -36,11 +36,11 @@
 		CEEBFD721A5A20590014D017 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD711A5A20590014D017 /* Types.swift */; };
 		CEEBFD881A5A591F0014D017 /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBFD861A5A591F0014D017 /* GCDAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */; };
+		E902EF9B1C437B9B0022770D /* SwifftCGI_SessionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242381C002BBA00688157 /* SwifftCGI_SessionsTests.swift */; };
 		E912423A1C002E8F00688157 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEBFD871A5A591F0014D017 /* GCDAsyncSocket.m */; };
 		E912423B1C002EE200688157 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C41BB7B14C009984DB /* Record.swift */; };
 		E912423C1C002EFF00688157 /* FCGIBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C21BB7B14C009984DB /* FCGIBackend.swift */; };
 		E912423E1C002F1500688157 /* BackendProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C01BB7B14C009984DB /* BackendProtocol.swift */; };
-		E91242451C00509900688157 /* SwifftCGI_SessionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242381C002BBA00688157 /* SwifftCGI_SessionsTests.swift */; };
 		E91242471C00560100688157 /* FCGIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D438C31BB7B14C009984DB /* FCGIRequest.swift */; };
 		E91242481C00561000688157 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E91242491C00567100688157 /* Sessions+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242331C002AD400688157 /* Sessions+Extensions.swift */; };
@@ -418,7 +418,6 @@
 				CE57390E1A65197B00AB02B8 /* Util.swift in Sources */,
 				CEEBFD3E1A5A1D430014D017 /* PrimitiveTests.swift in Sources */,
 				CE052E411A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */,
-				E91242451C00509900688157 /* SwifftCGI_SessionsTests.swift in Sources */,
 				CE052E3B1A5CBE1B00F8DA34 /* UIntExtensions.swift in Sources */,
 				E97331C71C02F6DB00ABD30C /* RouterTests.swift in Sources */,
 				E9E403721C39E99F00503224 /* HTTPHeaderCollection.swift in Sources */,
@@ -427,6 +426,7 @@
 				CED98B291A5E58090077A4EC /* RecordTests.swift in Sources */,
 				CE052E3C1A5CC17100F8DA34 /* Types.swift in Sources */,
 				E912423C1C002EFF00688157 /* FCGIBackend.swift in Sources */,
+				E902EF9B1C437B9B0022770D /* SwifftCGI_SessionsTests.swift in Sources */,
 				CED98B2B1A5E58CD0077A4EC /* HTTPTests.swift in Sources */,
 				E912424A1C00567500688157 /* SessionManagement.swift in Sources */,
 				E91242491C00567100688157 /* Sessions+Extensions.swift in Sources */,

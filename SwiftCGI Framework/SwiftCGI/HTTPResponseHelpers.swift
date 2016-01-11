@@ -60,7 +60,7 @@ public struct HTTPResponse {
         let serializedHeaders = headers.map({ header in "\(header.key): \(header.headerSerializableValue)" }).joinWithSeparator(HTTPNewline)
         let headerString = [httpStart, serializedHeaders].joinWithSeparator(HTTPNewline) + HTTPTerminator
         
-        let responseString = headerString + body as NSString
+        let responseString = headerString + body
         let responseData: NSData?
         switch contentType {
         case .ApplicationJSON:
@@ -101,6 +101,7 @@ public struct HTTPResponse {
     public mutating func setResponseHeader(header: HTTPResponseHeader) {
         switch header {
         case .ContentLength(_):
+            // This is a fatal error because it is an error in programming
             fatalError("Content length cannot be set manually as it is dynamically computed")
         case .ContentType(let contentType):
             // If they want to set the content type this way, so be it...

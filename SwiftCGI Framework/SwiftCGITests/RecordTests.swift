@@ -127,8 +127,10 @@ class RecordTests: XCTestCase {
         // contentLength of zero ;)
         XCTAssertEqual(record.fcgiPacketData.length, 8, "Incorrect packet data length (after processContentData)")
         
-        // NOW we manually set the data
-        record.rawData = byteData
+        // Do it again with the correct content length
+        record = ByteStreamRecord(version: .Version1, requestID: 1, contentLength: UInt16(numBytes), paddingLength: 0)
+        record.processContentData(byteData)
+        
         XCTAssertEqual(record.contentLength, UInt16(numBytes), "Incorrect content length (after setRawData)")
         XCTAssertEqual(record.fcgiPacketData.length, 8 + numBytes, "Incorrect packet data length (after setRawData)")
         
