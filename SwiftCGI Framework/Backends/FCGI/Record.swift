@@ -71,8 +71,8 @@ struct BeginRequestRecord: FCGIRecordType {
     private(set) var contentLength: FCGIContentLength
     let paddingLength: FCGIPaddingLength
     
-    var role: FCGIRequestRole?
-    var flags: FCGIRequestFlags?
+    private(set) var role: FCGIRequestRole?
+    private(set) var flags: FCGIRequestFlags?
     
     let kind: FCGIRecordKind = .BeginRequest
     
@@ -139,7 +139,7 @@ struct EndRequestRecord: FCGIRecordType {
     }
     
     func processContentData(data: NSData) {
-        fatalError("Error: Attempted to call processContentData on an EntRequestRecord.")
+        fatalError("Error: Attempted to call processContentData on an EndRequestRecord.")
     }
 }
 
@@ -149,13 +149,15 @@ struct ByteStreamRecord: FCGIRecordType {
     let requestID: FCGIRequestID
     
     private let _initContentLength: FCGIContentLength
-    var contentLength: FCGIContentLength { return FCGIContentLength(rawData?.length ?? 0) }
+    var contentLength: FCGIContentLength {
+        return FCGIContentLength(rawData?.length ?? 0)
+    }
     
     let paddingLength: FCGIPaddingLength
     
-    var rawData: NSData?
+    private(set) var rawData: NSData?
     
-    var kind: FCGIRecordKind = .Stdin {
+    private(set) var kind: FCGIRecordKind = .Stdin {
         willSet {
             switch newValue {
             case .Stdin, .Stdout, .Stderr:
@@ -187,6 +189,8 @@ struct ByteStreamRecord: FCGIRecordType {
         self.paddingLength = paddingLength
         self.kind = kind
         self.rawData = rawData
+        
+        
     }
 }
 

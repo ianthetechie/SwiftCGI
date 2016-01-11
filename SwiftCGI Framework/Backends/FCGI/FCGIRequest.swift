@@ -31,18 +31,18 @@
 let FCGIRecordHeaderLength: UInt = 8
 let FCGITimeout: NSTimeInterval = 5
 
-public class FCGIRequest {
+class FCGIRequest {
     let record: BeginRequestRecord
     let keepConnection: Bool
     
-    public internal(set) var params: RequestParams = [:]  // Set externally and never reset to nil thereafter
+    var params: RequestParams = [:]  // Set externally and never reset to nil thereafter
     
     private var _cookies: [String: String]?
     
-    public var socket: GCDAsyncSocket?     // Set externally by the server
-    public var streamData: NSMutableData?
+    var socket: GCDAsyncSocket?     // Set externally by the server
+    var streamData: NSMutableData?
     // TODO: actually set the headers
-    public var headers: [String: String]?
+    var headers: [String: String]?
     
     init(record: BeginRequestRecord) {
         self.record = record
@@ -72,21 +72,21 @@ public class FCGIRequest {
 
 extension FCGIRequest: Request {
     
-    public var path: String {
+    var path: String {
         guard let uri = params["REQUEST_URI"] else {
-            fatalError("Encountered reques that was missing a path")
+            fatalError("Encountered request that was missing a path")
         }
         return uri
     }
     
-    public func finish(status: RequestCompletionStatus) {
+    func finish(status: RequestCompletionStatus) {
         switch status {
         case .Complete:
             finishWithProtocolStatus(.RequestComplete, andApplicationStatus: 0)
         }
     }
     
-    public var cookies: [String: String]? {
+    var cookies: [String: String]? {
         get {
             if _cookies == nil {
                 if let cookieString = params["HTTP_COOKIE"] {
@@ -106,7 +106,7 @@ extension FCGIRequest: Request {
         }
     }
     
-    public var method: HTTPMethod {
+    var method: HTTPMethod {
         guard let requestMethod = params["REQUEST_METHOD"] else {
             fatalError("No REQUEST_METHOD found in the FCGI request params.")
         }
