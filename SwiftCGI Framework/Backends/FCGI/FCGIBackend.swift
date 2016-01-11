@@ -145,15 +145,16 @@ extension FCGIBackend: Backend {
             return true
         }
         
-        let remainingData = data.mutableCopy() as! NSMutableData
-        while remainingData.length > 0 {
-            let chunk = remainingData.subdataWithRange(NSMakeRange(0, min(remainingData.length, 65535)))
-            let outRecord = ByteStreamRecord(version: req.record.version, requestID: req.record.requestID, contentLength: UInt16(chunk.length), paddingLength: 0, kind: streamType, rawData: chunk)
-            
-            sock.writeData(outRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
-            
-            // Remove the data we just sent from the buffer
-            remainingData.replaceBytesInRange(NSMakeRange(0, chunk.length), withBytes: nil, length: 0)
+        if let remainingData = data.mutableCopy() as? NSMutableData {
+            while remainingData.length > 0 {
+                let chunk = remainingData.subdataWithRange(NSMakeRange(0, min(remainingData.length, 65535)))
+                let outRecord = ByteStreamRecord(version: req.record.version, requestID: req.record.requestID, contentLength: UInt16(chunk.length), paddingLength: 0, kind: streamType, rawData: chunk)
+                
+                sock.writeData(outRecord.fcgiPacketData, withTimeout: FCGITimeout, tag: 0)
+                
+                // Remove the data we just sent from the buffer
+                remainingData.replaceBytesInRange(NSMakeRange(0, chunk.length), withBytes: nil, length: 0)
+            }
         }
         
         let termRecord = ByteStreamRecord(version: req.record.version, requestID: req.record.requestID, contentLength: 0, paddingLength: 0, kind: streamType)

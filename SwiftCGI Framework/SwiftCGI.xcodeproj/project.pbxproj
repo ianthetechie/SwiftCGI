@@ -45,11 +45,14 @@
 		E91242481C00561000688157 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E91242491C00567100688157 /* Sessions+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242331C002AD400688157 /* Sessions+Extensions.swift */; };
 		E912424A1C00567500688157 /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242341C002AD400688157 /* SessionManagement.swift */; };
+		E97331C71C02F6DB00ABD30C /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97331C61C02F6DB00ABD30C /* RouterTests.swift */; };
 		E98F69411C02D91600E27F3F /* SessionManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242341C002AD400688157 /* SessionManagement.swift */; };
 		E98F69421C02D91C00E27F3F /* Sessions+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91242331C002AD400688157 /* Sessions+Extensions.swift */; };
 		E993D6131BB73B12007C3489 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E993D6121BB73B12007C3489 /* Request.swift */; };
 		E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
 		E99E5FE01AA2D8B600BED31D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99E5FDE1AA2D8B600BED31D /* Router.swift */; };
+		E9E403711C39E99F00503224 /* HTTPHeaderCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E403701C39E99F00503224 /* HTTPHeaderCollection.swift */; };
+		E9E403721C39E99F00503224 /* HTTPHeaderCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E403701C39E99F00503224 /* HTTPHeaderCollection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,8 +98,10 @@
 		E91242331C002AD400688157 /* Sessions+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sessions+Extensions.swift"; sourceTree = "<group>"; };
 		E91242341C002AD400688157 /* SessionManagement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagement.swift; sourceTree = "<group>"; };
 		E91242381C002BBA00688157 /* SwifftCGI_SessionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwifftCGI_SessionsTests.swift; sourceTree = "<group>"; };
+		E97331C61C02F6DB00ABD30C /* RouterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
 		E993D6121BB73B12007C3489 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		E99E5FDE1AA2D8B600BED31D /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		E9E403701C39E99F00503224 /* HTTPHeaderCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPHeaderCollection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +196,7 @@
 				E993D6121BB73B12007C3489 /* Request.swift */,
 				CE7DFA7E1A5B6AE200221B93 /* Server.swift */,
 				CE052E421A5CFE0B00F8DA34 /* HTTPTypes.swift */,
+				E9E403701C39E99F00503224 /* HTTPHeaderCollection.swift */,
 				CE052E3F1A5CF85500F8DA34 /* HTTPResponseHelpers.swift */,
 				CE57390C1A65179200AB02B8 /* Util.swift */,
 				E99E5FDE1AA2D8B600BED31D /* Router.swift */,
@@ -214,6 +220,7 @@
 				CEEBFD3D1A5A1D430014D017 /* PrimitiveTests.swift */,
 				CED98B281A5E58090077A4EC /* RecordTests.swift */,
 				CED98B2A1A5E58CD0077A4EC /* HTTPTests.swift */,
+				E97331C61C02F6DB00ABD30C /* RouterTests.swift */,
 				CEEBFD3B1A5A1D430014D017 /* Supporting Files */,
 			);
 			name = Tests;
@@ -383,6 +390,7 @@
 				68D438E81BB7B14C009984DB /* http_parser.c in Sources */,
 				E98F69411C02D91600E27F3F /* SessionManagement.swift in Sources */,
 				E98F69421C02D91C00E27F3F /* Sessions+Extensions.swift in Sources */,
+				E9E403711C39E99F00503224 /* HTTPHeaderCollection.swift in Sources */,
 				E99E5FDF1AA2D8B600BED31D /* Router.swift in Sources */,
 				68D438EF1BB7B14C009984DB /* http_parser_accessors.c in Sources */,
 				CEEBFD891A5A591F0014D017 /* GCDAsyncSocket.m in Sources */,
@@ -412,6 +420,8 @@
 				CE052E411A5CF85500F8DA34 /* HTTPResponseHelpers.swift in Sources */,
 				E91242451C00509900688157 /* SwifftCGI_SessionsTests.swift in Sources */,
 				CE052E3B1A5CBE1B00F8DA34 /* UIntExtensions.swift in Sources */,
+				E97331C71C02F6DB00ABD30C /* RouterTests.swift in Sources */,
+				E9E403721C39E99F00503224 /* HTTPHeaderCollection.swift in Sources */,
 				E91242471C00560100688157 /* FCGIRequest.swift in Sources */,
 				CE052E441A5CFE0B00F8DA34 /* HTTPTypes.swift in Sources */,
 				CED98B291A5E58090077A4EC /* RecordTests.swift in Sources */,

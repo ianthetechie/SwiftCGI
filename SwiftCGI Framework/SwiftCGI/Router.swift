@@ -24,15 +24,15 @@ public class Router {
         subrouters.append(subrouter)
     }
     
-    public func route(path: String) -> RequestHandler? {
+    public func route(pathToRoute: String) -> RequestHandler? {
         // TODO: Seems a bit kludgey... Functional, but kludgey...
         
         // Ignore stray slashes
-        let components = (path as NSString).pathComponents.filter { return $0 != "/" }
+        let components = (pathToRoute as NSString).pathComponents.filter { return $0 != "/" }
         
-        if components.count > 0 {
+//        if components.count > 0 {
             if components.count > 1 {
-                // Match on sub-routers first
+                // Match greedily on sub-routers first
                 let subPath = Array<String>(components[1..<components.count]).joinWithSeparator("/")
                 for subrouter in subrouters {
                     if let subhandler = subrouter.route(subPath) {
@@ -40,11 +40,12 @@ public class Router {
                     }
                 }
             }
-            
-            if self.path == components.first && (components.count == 1 || self.wildcard) {
+        
+            let pathMatchesFirstComponent = self.path == components.first
+            if (pathMatchesFirstComponent && (components.count == 1 || self.wildcard)) || (components.count == 0 && self.path == "/" && self.wildcard)  {
                 return handler
             }
-        }
+//        }
         
         return nil
     }

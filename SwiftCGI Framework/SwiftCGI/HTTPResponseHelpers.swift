@@ -54,13 +54,12 @@ public struct HTTPResponse {
     // MARK: Computed properties
     
     public var contentLength: Int { return body.utf8.count }
-    public var headerString: String {
+    public var responseData: NSData? {
         let httpStart = "HTTP/1.1 \(status.rawValue) \(status.description)"
         
-        let httpHeaderString = headers.map({ header in "\(header.key): \(header.serializedValue)" }).joinWithSeparator(HTTPNewline)
-        return [httpStart, httpHeaderString].joinWithSeparator(HTTPNewline) + HTTPTerminator
-    }
-    public var responseData: NSData? {
+        let serializedHeaders = headers.map({ header in "\(header.key): \(header.headerSerializableValue)" }).joinWithSeparator(HTTPNewline)
+        let headerString = [httpStart, serializedHeaders].joinWithSeparator(HTTPNewline) + HTTPTerminator
+        
         let responseString = headerString + body as NSString
         let responseData: NSData?
         switch contentType {
